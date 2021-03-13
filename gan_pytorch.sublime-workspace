@@ -1,0 +1,705 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"batch",
+				"batch_size\tstatement"
+			],
+			[
+				"data",
+				"dataset\tstatement"
+			],
+			[
+				"ad",
+				"add_holidays\tfunction"
+			],
+			[
+				"ts_",
+				"ts_series1\tstatement"
+			],
+			[
+				"Date",
+				"DatetimeIndex\tclass"
+			],
+			[
+				"is",
+				"isinstance\tfunction"
+			],
+			[
+				"raise_",
+				"raise_if_not\tfunction"
+			],
+			[
+				"Data",
+				"DataFrame\tclass"
+			],
+			[
+				"value",
+				"values1\tstatement"
+			],
+			[
+				"values",
+				"values1\tstatement"
+			],
+			[
+				"from",
+				"from_dataframe\tfunction"
+			],
+			[
+				"Index",
+				"IndexError\tclass"
+			],
+			[
+				"assert",
+				"assertRaises"
+			],
+			[
+				"da",
+				"data_dict"
+			],
+			[
+				"dummy_",
+				"dummy_indexing"
+			],
+			[
+				"retu",
+				"return_df\tstatement"
+			],
+			[
+				"test",
+				"test_df1\tstatement"
+			],
+			[
+				"raise",
+				"raise_if\tfunction"
+			],
+			[
+				"tes",
+				"test_df1\tstatement"
+			],
+			[
+				"date",
+				"date_range\tfunction"
+			],
+			[
+				"Time",
+				"TimeSeries\tclass"
+			],
+			[
+				"Value",
+				"ValueError\tclass"
+			],
+			[
+				"D",
+				"DataFrame\tclass"
+			],
+			[
+				"data_",
+				"data_resampled_ts\tstatement"
+			],
+			[
+				"pre",
+				"prev_indices\tstatement"
+			],
+			[
+				"val",
+				"values_prev"
+			],
+			[
+				"model",
+				"model_forecast\tstatement"
+			],
+			[
+				"sarim",
+				"sarimax_pred\tstatement"
+			],
+			[
+				"sari",
+				"sarimax_pred\tstatement"
+			],
+			[
+				"sar",
+				"sarimax_pred\tstatement"
+			],
+			[
+				"fiel",
+				"field_row_string\tstatement"
+			],
+			[
+				"inu",
+				"input_data\tstatement"
+			],
+			[
+				"it",
+				"iterrows\tfunction"
+			],
+			[
+				"met",
+				"metric_name\tstatement"
+			],
+			[
+				"sort_",
+				"sort_values\tfunction"
+			],
+			[
+				"set_",
+				"set_index\tfunction"
+			],
+			[
+				"y",
+				"y_pred\tstatement"
+			],
+			[
+				"L",
+				"LGBMClassifier\tmodule"
+			],
+			[
+				"XGB",
+				"XGBClassifier\tmodule"
+			],
+			[
+				"KN",
+				"KNeighborsClassifier\tclass"
+			],
+			[
+				"metri",
+				"metrics_row\tstatement"
+			],
+			[
+				"y_",
+				"y_score=\tparam"
+			],
+			[
+				"metric",
+				"metric_name\tstatement"
+			],
+			[
+				"metr",
+				"metric\tstatement"
+			],
+			[
+				"cla",
+				"classification_report\tfunction"
+			],
+			[
+				"roc_",
+				"roc_auc_score\tfunction"
+			],
+			[
+				"lo",
+				"log_loss\tfunction"
+			],
+			[
+				"cro",
+				"cross_val_score\tfunction"
+			],
+			[
+				"train",
+				"train_test_split\tfunction"
+			],
+			[
+				"train_",
+				"train_test_split\tfunction"
+			],
+			[
+				"Ne",
+				"NearestNeighbors\tclass"
+			],
+			[
+				"Lo",
+				"LogisticRegression\tclass"
+			],
+			[
+				"di",
+				"diff2\tstatement"
+			],
+			[
+				"peri",
+				"periods=\tparam"
+			],
+			[
+				"targ",
+				"target_diff2\tstatement"
+			],
+			[
+				"per",
+				"periods=\tparam"
+			],
+			[
+				"Val",
+				"ValueError\tclass"
+			],
+			[
+				"ser",
+				"series1\tstatement"
+			],
+			[
+				"asser",
+				"assertEqual\tfunction"
+			],
+			[
+				"my_re",
+				"my_req\tstatement"
+			],
+			[
+				"michal",
+				"michal_req\tstatement"
+			],
+			[
+				"michal_",
+				"michal_reqs\tstatement"
+			],
+			[
+				"my",
+				"my_lib\tstatement"
+			],
+			[
+				"micha",
+				"michal_req\tstatement"
+			],
+			[
+				"mich",
+				"michal_req\tstatement"
+			],
+			[
+				"myre",
+				"myreqs\tstatement"
+			],
+			[
+				"read",
+				"readlines\tfunction"
+			],
+			[
+				"set",
+				"set_index\tfunction"
+			],
+			[
+				"crea",
+				"create_from_file\tfunction"
+			],
+			[
+				"a",
+				"add\tfunction"
+			],
+			[
+				"prop",
+				"proportion_is_legendary\tstatement"
+			],
+			[
+				"tra",
+				"train_data\tstatement"
+			],
+			[
+				"dart",
+				"darts_VARMA\tstatement"
+			],
+			[
+				"tim",
+				"TimeSeries"
+			],
+			[
+				"pd_ser",
+				"pd_series4\tstatement"
+			],
+			[
+				"serie",
+				"series3\tstatement"
+			],
+			[
+				"Da",
+				"DartsBaseTestClass\tmodule"
+			],
+			[
+				"gap",
+				"gap_ends\tstatement"
+			],
+			[
+				"state",
+				"statespace_pred\tstatement"
+			],
+			[
+				"statespa",
+				"statespace_fitted\tstatement"
+			],
+			[
+				"varm",
+				"varmax_statespace\tstatement"
+			],
+			[
+				"fore",
+				"forecast_input"
+			],
+			[
+				"api_",
+				"api_pred\tstatement"
+			],
+			[
+				"test_",
+				"test_data\tstatement"
+			],
+			[
+				"pass",
+				"passenger\tstatement"
+			],
+			[
+				"gap_start",
+				"gap_starts\tstatement"
+			],
+			[
+				"gap_",
+				"gap_starts\tstatement"
+			],
+			[
+				"nr_t",
+				"nr_train\tstatement"
+			],
+			[
+				"darts",
+				"darts_arima\tstatement"
+			],
+			[
+				"Pas",
+				"passengers"
+			],
+			[
+				"plt",
+				"pyplot"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"conda",
+				"Conda: Activate Environment"
+			],
+			[
+				"markd",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"conda isn",
+				"Conda: Install Package"
+			],
+			[
+				"mark",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"revie",
+				"TodoReview: Project Files"
+			],
+			[
+				"term",
+				"Terminal: Open in project folder"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"todo",
+				"TodoReview: Project Files"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"git sta",
+				"Git: Status"
+			],
+			[
+				"conda ",
+				"Conda: Activate Environment"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/tneuer/Documents/unit8/cx/MLRG/WassersteinGAN/GAN-pytorch"
+	],
+	"file_history":
+	[
+		"/Users/tneuer/Documents/Testing/pytorch/pytorch_mnist.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/timeseries.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts.sublime-project",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/utils/timeseries_generation.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/tests/test_timeseries.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/logging.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/models/arima.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/Issues/issue284.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/models/forecasting_model.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/Issues/issue289.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/models/tcn_model.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/Issues/issue289",
+		"/Users/tneuer/Downloads/scoring-pipeline/run_example.sh",
+		"/Users/tneuer/Downloads/h2oai_experiment_logs_Model_Deployment_HydraulicSystem/h2oai_experiment_summary_c18ff564-e195-11ea-a7d8-0242ac110002/summary.json",
+		"/Users/tneuer/Documents/unit8/cx/MLOps/Data/Classification/2fit_models.py",
+		"/Users/tneuer/Documents/unit8/cx/MLOps/Data/Classification/1prepare_data.py",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/tests/test_local_forecasting_models.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/staged-recipes/recipes/u8darts/issue282.py",
+		"/Users/tneuer/Documents/issue282.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/conda-receipe/meta.yaml",
+		"/Users/tneuer/Documents/unit8/cx/MLOps/DataRobot/PythonClient/predict.py",
+		"/Users/tneuer/Documents/unit8/cx/MLOps/DataRobot/change_data.py",
+		"/Users/tneuer/Documents/unit8/cx/MLOps/DataRobot/custom-test.py",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+		"/Users/tneuer/Documents/unit8/cx/Darts/darts/README.md",
+		"/Users/tneuer/Documents/Testing/el_test.py",
+		"/Users/tneuer/Documents/Testing/test/test_calculator.py",
+		"/Users/tneuer/Documents/Testing/testing.sublime-project",
+		"/Users/tneuer/Documents/Testing/test/__init__.py",
+		"/Users/tneuer/Documents/Testing/__init__.py",
+		"/Users/tneuer/Documents/Testing/src/__init__.py",
+		"/Users/tneuer/Documents/Testing/src/calculator.py",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/CodeFormatter/Default (OSX).sublime-keymap",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/TodoReview/Default.sublime-keymap",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/TodoReview/TodoReview.sublime-settings",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/User/TodoReview.sublime-settings",
+		"/Users/tneuer/Documents/Testing/.idea/Testing.iml",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/AutoDocstring/AutoDocstring.sublime-settings",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/AutoDocstring/Default (OSX).sublime-keymap",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/Terminal/Default (OSX).sublime-keymap",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/User/Terminal.sublime-settings",
+		"/Users/tneuer/Downloads/predict.py",
+		"/Users/tneuer/darts-runs.yml",
+		"/Users/tneuer/Documents/unit8/cx/MLOps/DataRobot/cahnge_data.py",
+		"/Users/tneuer/Documents/unit8/cx/MyDarts/darts/varma_test.py",
+		"/Users/tneuer/Documents/unit8/cx/MyMLOps/DataRobot/test.py",
+		"/Users/tneuer/Documents/Test/TimeSeries/test_var.py",
+		"/Users/tneuer/Documents/unit8/cx/MyDarts/darts/darts/models/VAR.py",
+		"/Users/tneuer/Documents/unit8/cx/MyDarts/darts/darts/models/arima.py",
+		"/Users/tneuer/Documents/unit8/cx/MyDarts/darts/darts/timeseries.py",
+		"/Users/tneuer/Documents/Test/TimeSeries/test_gaps.py",
+		"/Users/tneuer/Documents/unit8/cx/MyDarts/darts/darts/models/test_var.py",
+		"/Users/tneuer/Documents/Test/TimeSeries/test_gaps_minimal.py",
+		"/Users/tneuer/Documents/Test/TimeSeries/test_arima.py",
+		"/Users/tneuer/Documents/Test/Sorting/README.md",
+		"/Users/tneuer/Documents/Test/test.py",
+		"/Users/tneuer/Documents/unit8/BD/CashFlow/example_analysis.py",
+		"/Users/tneuer/Documents/unit8/BD/CashFlow/example_data.csv",
+		"/Users/tneuer/Documents/unit8/cx/Darts/test_darts.py",
+		"/Users/tneuer/Documents/unit8/cx/Darts/MockData/passengers.csv",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/tneuer/Library/Application Support/Sublime Text 3/Packages/User/Plain text.sublime-settings"
+	],
+	"find":
+	{
+		"height": 39.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 38.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.exec":
+	{
+		"height": 236.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Conda/Conda.sublime-build",
+	"project": "gan_pytorch.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"calc",
+				"test/test_calculator.py"
+			],
+			[
+				"",
+				"src/calculator.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 390.0,
+		"last_filter": "add",
+		"selected_items":
+		[
+			[
+				"add",
+				"add"
+			]
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 222.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
