@@ -74,10 +74,11 @@ class Generator(NeuralNetwork):
         return self(sample_noise)
 
 
-class Discriminator(NeuralNetwork):
+class Adversariat(NeuralNetwork):
     def __init__(self, architecture):
-        super(Discriminator, self).__init__(architecture, "Adversariat")
+        super(Adversariat, self).__init__(architecture, "Adversariat")
 
     def forward(self, x):
         logits = self.network(x)
         return logits
+
