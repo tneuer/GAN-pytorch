@@ -4,18 +4,25 @@ import torch
 from torch.nn import Module, Sequential
 from torchsummary import summary
 
+
 class NeuralNetwork(Module):
-    def __init__(self, architecture, name):
+    def __init__(self, architecture, name, input_size):
         super(NeuralNetwork, self).__init__()
         self.architecture = architecture
         self.name = name
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.input_size = input_size
+        if isinstance(input_size, int):
+            self.input_size = tuple([input_size])
+        elif isinstance(input_size, list):
+            self.input_size = tuple(input_size)
 
         self._build_network()
 
     def summary(self):
+        print("Input shape: ", self.input_size)
         return summary(self, input_size=self.input_size)
 
-    # TODO: JSON in/output
     def save_as_json(self, path=None):
         json_dict = {}
         json_dict[self.name] = [["torch.nn."+layer.__name__, params] for layer, params in self.architecture]
@@ -40,8 +47,15 @@ class NeuralNetwork(Module):
                     input_size = params["in_features"]
                 except KeyError:
                     raise KeyError("First layer with 'out_features' has to have 'in_features'.")
-                self.input_size = tuple([input_size]) if isinstance(input_size, int) else input_size
                 break
+            elif "out_channels" in params:
+                try:
+                    input_size = params["in_channels"]
+                except KeyError:
+                    raise KeyError("First layer with 'out_channels' has to have 'in_channels'.")
+                break
+        else:
+            raise ValueError("At least one layer has to contain 'out_features' or 'out_channels'.")
 
         self.out_features = []
         for i, (layer, params) in enumerate(self.architecture):
@@ -49,36 +63,45 @@ class NeuralNetwork(Module):
                 if "in_features" not in params:
                     params["in_features"] = self.out_features[-1]
                 self.out_features.append(params["out_features"])
+            elif "out_channels" in params:
+                if "in_channels" not in params:
+                    params["in_channels"] = self.out_features[-1]
+                self.out_features.append(params["out_channels"])
+            elif "batchnorm" in layer.__name__.lower():
+                params["num_features"] = self.out_features[-1]
+
+
+        self.layers = []
+        for layer, params in self.architecture:
+            self.layers.append(layer(**params))
 
         self.network = Sequential(
-            *[layer(**params) for layer, params in self.architecture]
+            *self.layers
         )
+
+    def forward(self, x):
+        output = self.network(x)
+        return output
 
     def __str__(self):
         return self.name
 
 
 class Generator(NeuralNetwork):
-    def __init__(self, architecture):
-        super(Generator, self).__init__(architecture, name="Generator")
-
-    def forward(self, x):
-        output = self.network(x)
-        return output
+    def __init__(self, architecture, input_size):
+        super(Generator, self).__init__(architecture, input_size=input_size, name="Generator")
 
     def sample(self, n):
-        return torch.empty(n, self.input_size[0]).normal_(mean=0, std=1)
+        return torch.randn(n, *self.input_size, requires_grad=True, device=self.device)
 
     def generate(self, n):
         sample_noise = self.sample(n=n)
         return self(sample_noise)
 
 
-class Adversariat(NeuralNetwork):
-    def __init__(self, architecture):
-        super(Adversariat, self).__init__(architecture, "Adversariat")
 
-    def forward(self, x):
-        logits = self.network(x)
-        return logits
+class Adversariat(NeuralNetwork):
+    def __init__(self, architecture, input_size):
+        super(Adversariat, self).__init__(architecture, input_size=input_size, name="Adversariat")
+
 

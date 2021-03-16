@@ -1,41 +1,99 @@
 import torch
-import utils.utils as utils
-from utils.models import VanillaGAN, WassersteinGAN, WassersteinGAN_GP
 
+import numpy as np
+import utils.utils as utils
+
+from torch import nn
+from utils.models import VanillaGAN, WassersteinGAN, WassersteinGAN_GP
+from utils.layers import LayerReshape, LayerDebug
 
 if __name__ == '__main__':
 
-    from torch import nn
-    datapath = "./data/mnist/"
-    X_train, y_train, X_test, y_test = utils.load_mnist(datapath, normalize=True, pad=0, return_datasets=False)
+    datapath = "./Data/mnist/"
+    X_train, y_train, X_test, y_test = utils.load_mnist(datapath, normalize=True, pad=2, return_datasets=False)
+    lr_gen = 0.0001
+    lr_adv = 0.00005
+    epochs = 1
+    batch_size = 64
 
-    z_dim = 32
+    X_train = X_train.reshape((-1, 1, 32, 32))
+    X_test = X_test.reshape((-1, 1, 32, 32))
+    z_dim = 2
+    out_size = X_train.shape[1:]
     generator_architecture = [
         (nn.Linear, {"in_features": z_dim, "out_features": 128}),
-        (nn.Dropout, {"p": 0.5}),
-        (nn.ReLU, {}),
-        (nn.Linear, {"out_features": 784}),
+        (nn.LeakyReLU, {"negative_slope": 0.2}),
+        (nn.Linear, {"out_features": 256}),
+        (nn.LeakyReLU, {"negative_slope": 0.2}),
+        (nn.BatchNorm1d, {}),
+        (nn.Linear, {"out_features": 512}),
+        (nn.LeakyReLU, {"negative_slope": 0.2}),
+        (nn.BatchNorm1d, {}),
+        (nn.Linear, {"out_features": 1024}),
+        (nn.LeakyReLU, {"negative_slope": 0.2}),
+        (nn.BatchNorm1d, {}),
+        (nn.Linear, {"out_features": int(np.prod(out_size))}),
+        (LayerReshape, {"shape": out_size}),
         (nn.Sigmoid, {})
     ]
-    input_size = 784
     adversariat_architecture = [
-        (nn.Linear, {"in_features": input_size, "out_features": 128}),
-        (nn.ReLU, {}),
-        (nn.BatchNorm1d, {"num_features": 128}),
+        (nn.Flatten, {}),
+        (nn.Linear, {"in_features": int(np.prod(out_size)), "out_features": 512}),
+        (nn.LeakyReLU, {"negative_slope": 0.2}),
+        (nn.Linear, {"out_features": 256}),
+        (nn.LeakyReLU, {"negative_slope": 0.2}),
         (nn.Linear, {"out_features": 1}),
-        (nn.Sigmoid, {})
+        # (nn.Sigmoid, {})
     ]
-    vanilla_gan = VanillaGAN(
-        generator_architecture, adversariat_architecture, folder="TrainedModels/GAN"
-    )
 
-    vanilla_gan.compile(optim=torch.optim.Adam, optim_kwargs={"lr": 1e-3})
-    vanilla_gan.train(
-        X_train=X_train.reshape((-1, 28*28)),
-        X_test=X_test.reshape((-1, 28*28)),
-        batch_size=64,
-        epochs=1
+    # z_dim = [1, 8, 8]
+    # out_size = X_train.shape[1:]
+    # generator_architecture = [
+    #     (nn.ConvTranspose2d, {"in_channels": 1, "out_channels": 64, "kernel_size": 4, "stride": 2, "padding": 1}),
+    #     (nn.LeakyReLU, {"negative_slope": 0.2}),
+
+    #     (nn.ConvTranspose2d, {"out_channels": 32, "kernel_size": 4, "stride": 2, "padding": 1}),
+    #     (nn.LeakyReLU, {"negative_slope": 0.2}),
+    #     (nn.BatchNorm2d, {}),
+
+    #     (nn.Conv2d, {"out_channels": 16, "kernel_size": 5, "stride": 1, "padding": 2}),
+    #     (nn.LeakyReLU, {"negative_slope": 0.2}),
+    #     (nn.BatchNorm2d, {}),
+
+    #     (nn.Conv2d, {"out_channels": 8, "kernel_size": 5, "stride": 1, "padding": 2}),
+    #     (nn.LeakyReLU, {"negative_slope": 0.2}),
+    #     (nn.BatchNorm2d, {}),
+
+    #     (nn.Conv2d, {"out_channels": 1, "kernel_size": 5, "stride": 1, "padding": 2}),
+    #     (nn.Sigmoid, {})
+    # ]
+    # adversariat_architecture = [
+    #     (nn.Conv2d, {"in_channels": 1, "out_channels": 1, "kernel_size": 5, "stride": 3, "padding": 0}),
+    #     (nn.Flatten, {}),
+    #     (nn.Linear, {"in_features": 100, "out_features": 128}),
+    #     (nn.ReLU, {}),
+    #     (nn.Linear, {"out_features": 1}),
+    #     (nn.ReLU, {}),
+    #     (nn.Linear, {"out_features": 1}),
+    #     (nn.Sigmoid, {})
+    # ]
+
+    vanilla_gan = WassersteinGAN_GP(
+        generator_architecture, adversariat_architecture, z_dim=z_dim, in_dim=out_size, folder="TrainedModels/GAN"
     )
     vanilla_gan.summary(save=True)
     vanilla_gan.save_as_json()
+    vanilla_gan.compile(
+        optim=torch.optim.RMSprop,
+        generator_kwargs={"lr": lr_gen},
+        adversariat_kwargs={"lr": lr_adv}
+    )
+    vanilla_gan.train(
+        X_train=X_train,
+        X_test=X_test,
+        batch_size=batch_size,
+        epochs=epochs,
+        adv_steps=5,
+        batch_log_steps=100
+    )
     vanilla_gan.save()

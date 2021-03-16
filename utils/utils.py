@@ -32,6 +32,7 @@ def load_mnist(datapath, normalize=True, pad=None, return_datasets=False):
 
     if pad:
         X_train = np.pad(X_train, [(0, 0), (pad, pad), (pad, pad)], mode='constant')
+        X_test = np.pad(X_test, [(0, 0), (pad, pad), (pad, pad)], mode='constant')
 
     if return_datasets:
         train = DataSet(X_train, y_train)
