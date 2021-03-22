@@ -5,35 +5,35 @@
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "build_current",
 			"selector": "source.python",
-			"shell_cmd": "PYTHONPATH=./ /Users/tneuer/opt/miniconda3/envs/pytorch38/bin/python3 -u $file",
-			"working_dir": "./"
+			"shell_cmd": "PYTHONPATH=./ /home/thomas/miniconda3/envs/pytorch38/bin/python3 -u $file",
+			"working_dir": "/home/thomas/Backup/Algorithmen/GAN-pytorch"
 		},
 		{
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "build_tests",
 			"selector": "source.python",
-			"shell_cmd": "/Users/tneuer/opt/miniconda3/envs/pytorch38/bin/python3 -u -m unittest discover",
+			"shell_cmd": "/home/thomas/miniconda3/envs/pytorch38/bin/python3 -u -m unittest discover",
 			"working_dir": "./"
 		},
 		{
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "build_test",
 			"selector": "source.python",
-			"shell_cmd": "/Users/tneuer/opt/miniconda3/envs/pytorch38/bin/python3 -u -m unittest",
+			"shell_cmd": "PYTHONPATH=./ /home/thomas/miniconda3/envs/pytorch38/bin/python3 -u test_gans.py",
 			"working_dir": "./"
 		},
 		{
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "Anaconda Python Builder",
 			"selector": "source.python",
-			"shell_cmd": "\"/Users/tneuer/opt/miniconda3/envs/xenv38/bin/python3\" -u \"$file\""
+			"shell_cmd": "\"/home/thomas/miniconda3/envs/xenv/bin/python\" -u \"$file\""
 		}
 	],
-	"conda_environment": "/Users/tneuer/opt/miniconda3/envs/pytorch38",
+	"conda_environment": "/home/thomas/miniconda3/envs/pytorch38",
 	"folders":
 	[
 		{
-			"path": "/Users/tneuer/Documents/unit8/cx/MLRG/WassersteinGAN/"
+			"path": "./"
 		}
 	]
 }

@@ -8,7 +8,6 @@ from torchsummary import summary
 class NeuralNetwork(Module):
     def __init__(self, architecture, name, input_size):
         super(NeuralNetwork, self).__init__()
-        self.architecture = architecture
         self.name = name
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.input_size = input_size
@@ -17,7 +16,14 @@ class NeuralNetwork(Module):
         elif isinstance(input_size, list):
             self.input_size = tuple(input_size)
 
-        self._build_network()
+        if isinstance(architecture, torch.nn.Module):
+            self.network = architecture
+        else:
+            self.architecture = architecture
+            self.network = self._build_network()
+
+        print(self.network)
+        raise
 
     def summary(self):
         print("Input shape: ", self.input_size)
@@ -75,9 +81,10 @@ class NeuralNetwork(Module):
         for layer, params in self.architecture:
             self.layers.append(layer(**params))
 
-        self.network = Sequential(
+        network = Sequential(
             *self.layers
         )
+        return network
 
     def forward(self, x):
         output = self.network(x)
@@ -90,14 +97,6 @@ class NeuralNetwork(Module):
 class Generator(NeuralNetwork):
     def __init__(self, architecture, input_size):
         super(Generator, self).__init__(architecture, input_size=input_size, name="Generator")
-
-    def sample(self, n):
-        return torch.randn(n, *self.input_size, requires_grad=True, device=self.device)
-
-    def generate(self, n):
-        sample_noise = self.sample(n=n)
-        return self(sample_noise)
-
 
 
 class Adversariat(NeuralNetwork):

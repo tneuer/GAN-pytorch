@@ -4,7 +4,7 @@ import numpy as np
 import utils.utils as utils
 
 from torch import nn
-from utils.models import VanillaGAN, WassersteinGAN, WassersteinGAN_GP
+from models.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
 from utils.layers import LayerReshape, LayerDebug
 
 if __name__ == '__main__':
@@ -20,6 +20,10 @@ if __name__ == '__main__':
     X_test = X_test.reshape((-1, 1, 32, 32))
     z_dim = 2
     out_size = X_train.shape[1:]
+
+    #########################################################################
+    # Fully connected network
+    #########################################################################
     generator_architecture = [
         (nn.Linear, {"in_features": z_dim, "out_features": 128}),
         (nn.LeakyReLU, {"negative_slope": 0.2}),
@@ -43,9 +47,13 @@ if __name__ == '__main__':
         (nn.Linear, {"out_features": 256}),
         (nn.LeakyReLU, {"negative_slope": 0.2}),
         (nn.Linear, {"out_features": 1}),
-        # (nn.Sigmoid, {})
+        (nn.Sigmoid, {})
     ]
 
+
+    #########################################################################
+    # Convolutional network
+    #########################################################################
     # z_dim = [1, 8, 8]
     # out_size = X_train.shape[1:]
     # generator_architecture = [
@@ -78,22 +86,48 @@ if __name__ == '__main__':
     #     (nn.Sigmoid, {})
     # ]
 
-    vanilla_gan = WassersteinGAN_GP(
-        generator_architecture, adversariat_architecture, z_dim=z_dim, in_dim=out_size, folder="TrainedModels/GAN"
+
+    #########################################################################
+    # torch.nn.Module 1
+    #########################################################################
+    generator_architecture = nn.Sequential(nn.Linear(784, 128),
+                      nn.ReLU(),
+                      nn.Linear(128,64),
+                      nn.ReLU(),
+                      nn.Linear(64,10))
+
+
+    #########################################################################
+    # torch.nn.Module 1
+    #########################################################################
+    # class SimpleNetwork(nn.Module):
+    #     def __init__(self):
+    #         super().__init__()
+
+    #         self.hidden_1 = nn.Linear(784,128)
+    #         self.hidden_2 = nn.Linear(128,64)
+    #         self.output = nn.Linear(64,10)
+
+    #     def forward(self,x):
+    #         x = F.relu(self.hidden_1(x))
+    #         x = F.relu(self.hidden_2(x))
+    #         y_pred = self.output(x)
+    #         return y_pred
+    # model = SimpleNetwork()
+
+    vanilla_gan = VanillaGAN(
+        generator_architecture=generator_architecture, adversariat_architecture=adversariat_architecture,
+        z_dim=z_dim, in_dim=out_size, folder="TrainedModels/GAN", optim=torch.optim.RMSprop,
+        generator_kwargs={"lr": lr_gen}, adversariat_kwargs={"lr": lr_adv}, enable_tensorboard=True
     )
     vanilla_gan.summary(save=True)
     vanilla_gan.save_as_json()
-    vanilla_gan.compile(
-        optim=torch.optim.RMSprop,
-        generator_kwargs={"lr": lr_gen},
-        adversariat_kwargs={"lr": lr_adv}
-    )
-    vanilla_gan.train(
+    vanilla_gan.fit(
         X_train=X_train,
         X_test=X_test,
         batch_size=batch_size,
         epochs=epochs,
         adv_steps=5,
-        batch_log_steps=100
+        print_every=100
     )
     vanilla_gan.save()

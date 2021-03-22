@@ -54,3 +54,10 @@ def plot_images(images, labels=None, show=True, n=9):
     if show:
         plt.show()
     return fig, axs
+
+
+def wasserstein_loss(input, target):
+    if np.all((target==1).cpu().numpy()):
+        return -torch.mean(input)
+    elif np.all((target==0).cpu().numpy()):
+        return torch.mean(input)
