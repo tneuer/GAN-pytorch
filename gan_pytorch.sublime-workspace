@@ -4,8 +4,232 @@
 		"selected_items":
 		[
 			[
+				"Cond",
+				"ConditionalWassersteinGAN\tclass"
+			],
+			[
+				"log",
+				"log_kwargs\tstatement"
+			],
+			[
+				"save_",
+				"save_images_every\tstatement"
+			],
+			[
+				"save",
+				"save_model_every\tstatement"
+			],
+			[
+				"sa",
+				"save_model_every=\tparam"
+			],
+			[
+				"log_",
+				"log_kwargs"
+			],
+			[
+				"adv",
+				"adv_steps\tparam"
+			],
+			[
+				"sav",
+				"save_images_every"
+			],
+			[
+				"test",
+				"test_x_batch\tstatement"
+			],
+			[
+				"test_",
+				"test_batch\tstatement"
+			],
+			[
+				"max",
+				"max_epochs\tparam"
+			],
+			[
+				"Gene",
+				"GenerativeModel\tclass"
+			],
+			[
+				"wh",
+				"who\tparam"
+			],
+			[
+				"X_",
+				"X_batch=\tparam"
+			],
+			[
+				"X",
+				"X_batch\tstatement"
+			],
+			[
+				"con",
+				"concatenate"
+			],
+			[
+				"__",
+				"__bases__\tstatement"
+			],
+			[
+				"Va",
+				"VanillaGAN\tclass"
+			],
+			[
+				"y_",
+				"y_batch\tparam"
+			],
+			[
+				"fix",
+				"fixed_noise\tstatement"
+			],
+			[
+				"Z_",
+				"Z_batch=\tparam"
+			],
+			[
+				"writer",
+				"writer_train\tstatement"
+			],
+			[
+				"fake",
+				"fake_predictions\tstatement"
+			],
+			[
+				"in",
+				"input_size\tparam"
+			],
+			[
+				"gen",
+				"gen_in_dim\tstatement"
+			],
+			[
+				"y",
+				"y_dim\tparam"
+			],
+			[
+				"la",
+				"label_dim\tstatement"
+			],
+			[
+				"ten",
+				"tensor2\tparam"
+			],
+			[
+				"tesn",
+				"tensor2\tstatement"
+			],
+			[
+				"tens",
+				"tensor2\tstatement"
+			],
+			[
+				"tenso",
+				"tensor2\tparam"
+			],
+			[
+				"from",
+				"from_numpy\tfunction"
+			],
+			[
+				"fi",
+				"fixed_labels\tstatement"
+			],
+			[
+				"fiex",
+				"fixed_noise_size\tparam"
+			],
+			[
+				"fixe",
+				"fixed_noise_size\tparam"
+			],
+			[
+				"uni",
+				"unique\tfunction"
+			],
+			[
+				"Layer",
+				"LayerPrintSize\tclass"
+			],
+			[
+				"C",
+				"ConditionalVanillaGAN\tmodule"
+			],
+			[
+				"inp",
+				"input_size"
+			],
+			[
+				"adver",
+				"adversariat"
+			],
+			[
+				"f",
+				"fixed_noise_size=\tparam"
+			],
+			[
+				"y_t",
+				"y_train\tstatement"
+			],
+			[
+				"net",
+				"network_structure\tstatement"
+			],
+			[
+				"input",
+				"input_type\tstatement"
+			],
+			[
+				"a",
+				"adv_type=\tparam"
+			],
+			[
+				"val",
+				"valid_last_layer\tstatement"
+			],
+			[
+				"losses",
+				"losses_dict\tstatement"
+			],
+			[
 				"batch",
-				"batch_size\tstatement"
+				"batches_per_epoch\tstatement"
+			],
+			[
+				"losse",
+				"_losses"
+			],
+			[
+				"by",
+				"by_epoch"
+			],
+			[
+				"lo",
+				"logged_losses"
+			],
+			[
+				"Ad",
+				"Adversariat"
+			],
+			[
+				"Adver",
+				"Adversariat_real"
+			],
+			[
+				"get_",
+				"get_hyperparameters\tfunction"
+			],
+			[
+				"bat",
+				"batch_size"
+			],
+			[
+				"advers",
+				"adversariat_loss_fn"
+			],
+			[
+				"gene",
+				"generator_loss_fn"
 			],
 			[
 				"data",
@@ -44,10 +268,6 @@
 				"values1\tstatement"
 			],
 			[
-				"from",
-				"from_dataframe\tfunction"
-			],
-			[
 				"Index",
 				"IndexError\tclass"
 			],
@@ -66,10 +286,6 @@
 			[
 				"retu",
 				"return_df\tstatement"
-			],
-			[
-				"test",
-				"test_df1\tstatement"
 			],
 			[
 				"raise",
@@ -102,10 +318,6 @@
 			[
 				"pre",
 				"prev_indices\tstatement"
-			],
-			[
-				"val",
-				"values_prev"
 			],
 			[
 				"model",
@@ -148,10 +360,6 @@
 				"set_index\tfunction"
 			],
 			[
-				"y",
-				"y_pred\tstatement"
-			],
-			[
 				"L",
 				"LGBMClassifier\tmodule"
 			],
@@ -168,10 +376,6 @@
 				"metrics_row\tstatement"
 			],
 			[
-				"y_",
-				"y_score=\tparam"
-			],
-			[
 				"metric",
 				"metric_name\tstatement"
 			],
@@ -186,10 +390,6 @@
 			[
 				"roc_",
 				"roc_auc_score\tfunction"
-			],
-			[
-				"lo",
-				"log_loss\tfunction"
 			],
 			[
 				"cro",
@@ -280,10 +480,6 @@
 				"create_from_file\tfunction"
 			],
 			[
-				"a",
-				"add\tfunction"
-			],
-			[
 				"prop",
 				"proportion_is_legendary\tstatement"
 			],
@@ -318,59 +514,37 @@
 			[
 				"state",
 				"statespace_pred\tstatement"
-			],
-			[
-				"statespa",
-				"statespace_fitted\tstatement"
-			],
-			[
-				"varm",
-				"varmax_statespace\tstatement"
-			],
-			[
-				"fore",
-				"forecast_input"
-			],
-			[
-				"api_",
-				"api_pred\tstatement"
-			],
-			[
-				"test_",
-				"test_data\tstatement"
-			],
-			[
-				"pass",
-				"passenger\tstatement"
-			],
-			[
-				"gap_start",
-				"gap_starts\tstatement"
-			],
-			[
-				"gap_",
-				"gap_starts\tstatement"
-			],
-			[
-				"nr_t",
-				"nr_train\tstatement"
-			],
-			[
-				"darts",
-				"darts_arima\tstatement"
-			],
-			[
-				"Pas",
-				"passengers"
-			],
-			[
-				"plt",
-				"pyplot"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "examples/custom_example_conditional.py",
+			"settings":
+			{
+				"buffer_size": 5561,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrainedModels/ConditionalGAN20210405_110133/summary.txt",
+			"settings":
+			{
+				"buffer_size": 2700,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "models/GAN.py",
+			"settings":
+			{
+				"buffer_size": 431,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -399,6 +573,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"conda ins",
+				"Conda: Install Package"
+			],
 			[
 				"conda",
 				"Conda: Activate Environment"
@@ -488,10 +666,47 @@
 	},
 	"expanded_folders":
 	[
-		"/home/thomas/Backup/Algorithmen/GAN-pytorch"
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/conditional",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/unconditional",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/utils"
 	],
 	"file_history":
 	[
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/conditional/ConditionalGenerativeModel.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/conditional/ConditionalDualGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/conditional/ConditionalWassersteinGANGP.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/conditional/ConditionalWassersteinGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/unconditional/WassersteinGANGP.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/utils/utils.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/conditional/ConditionalVanillaGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/unconditional/VanillaGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/unconditional/WassersteinGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/ConditionalGenerativeModel.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/ConditionalDualGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/GenerativeModel.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/GAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/unconditional/DualGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/examples/custom_example.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/DualGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/WassersteinGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/WassersteinGANGP.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/gan_pytorch.sublime-project",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/VanillaGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/models/ConditionalVanillaGAN.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/ConditionalGAN20210404_210500/summary.txt",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/ConditionalGAN/summary.txt",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/utils/networks.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/ConditionalGAN20210404_203833/summary.txt",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/GAN/summary.txt",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/ConditionalGAN20210404_203227/summary.txt",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/ConditionalGAN20210404_202925/summary.txt",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/examples/sequential_example.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/utils/layers.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/test_gans.py",
+		"/home/thomas/miniconda3/envs/pytorch38/lib/python3.8/site-packages/torch/nn/modules/module.py",
+		"/home/thomas/Backup/Algorithmen/GAN-pytorch/TrainedModels/GAN20210403_204152/model.json",
 		"/Users/tneuer/Documents/Testing/pytorch/pytorch_mnist.py",
 		"/Users/tneuer/Documents/unit8/cx/Darts/darts/darts/timeseries.py",
 		"/Users/tneuer/Documents/unit8/cx/Darts/darts.sublime-project",
@@ -560,13 +775,14 @@
 	],
 	"find":
 	{
-		"height": 39.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
 		"height": 101.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
@@ -574,6 +790,45 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"X_test",
+			"test_dataloader",
+			"_log_images",
+			"sample",
+			"))",
+			"fixed_",
+			"Total",
+			"calculate_losses",
+			"log",
+			"calculate_losses",
+			"adversariat",
+			"fixed_labels",
+			"z_dim",
+			"VanillaGAN",
+			":",
+			"\"",
+			"ConditionalGenerativeModel",
+			"GenerativeModel",
+			"arch",
+			")\n",
+			"arc",
+			"    def save_as_json(self, save=True, name=\"model\"):\n        json_dict = {}\n        for network in self.neural_nets:\n            json_dict.update(network.save_as_json(path=None))\n        if save:\n            with open(self.folder+name+'.json', 'w') as f:\n                json.dump(json_dict, f, indent=4)\n        return json_dict\n\n    @classmethod\n    def load_from_json(cls, path):\n        with open(path, \"r\") as f:\n            json_dict = json.load(f)\n        for _, architecture in json_dict.items():\n            for i, (layer, params) in enumerate(architecture):\n                architecture[i][0] = eval(layer)\n        return cls(\n            generator_architecture=json_dict[\"Generator\"],\n            adversariat_architecture=json_dict[\"Adversariat\"]\n        )",
+			"arch",
+			")\n",
+			"architecture",
+			"archi",
+			"architecture",
+			"mean",
+			"self._los",
+			"logged_losses",
+			"losses",
+			"self.losses",
+			"{}",
+			"self.batch_size",
+			"self.log_every",
+			"numpy",
+			"\n        ",
+			"set_",
+			"self"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -591,14 +846,267 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "examples/custom_example_conditional.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5561,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2529,
+								2529
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2529,
+										2530
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2524,
+										2525
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 495.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "TrainedModels/ConditionalGAN20210405_110133/summary.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2700,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "models/GAN.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 431,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								431,
+								431
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 24.0
 	},
 	"input":
 	{
@@ -643,11 +1151,11 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/Conda/Conda.sublime-build",
+	"pinned_build_system": "build_current",
 	"project": "gan_pytorch.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 44.0
 	},
 	"save_all_on_build": true,
 	"select_file":

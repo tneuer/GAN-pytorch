@@ -2,7 +2,7 @@ import torch
 
 import numpy as np
 
-from models.DualGAN import DualGAN
+from models.unconditional.DualGAN import DualGAN
 from utils.utils import wasserstein_loss
 
 
@@ -12,40 +12,38 @@ class WassersteinGANGP(DualGAN):
     #########################################################################
     def __init__(
             self,
-            generator_architecture,
-            adversariat_architecture,
-            z_dim,
+            generator,
+            adversariat,
             in_dim,
+            z_dim,
             optim=None,
             optim_kwargs=None,
             generator_optim=None,
             generator_kwargs=None,
             adversariat_optim=None,
             adversariat_kwargs=None,
+            fixed_noise_size=32,
             lmbda_grad=10,
             device=None,
-            folder="./WassersteinGANGP",
-            enable_tensorboard=True):
+            folder="./WassersteinGANGP"):
 
-        assert adversariat_architecture[-1][0] == torch.nn.Linear, (
-            "Last layer activation function of adversariat needs to be 'torch.nn.Linear'."
-        )
-        super(WassersteinGANGP, self).__init__(
-            generator_architecture=generator_architecture, adversariat_architecture=adversariat_architecture,
-            z_dim=z_dim, in_dim=in_dim,
+        DualGAN.__init__(
+            self,
+            generator=generator, adversariat=adversariat,
+            z_dim=z_dim, in_dim=in_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,
             generator_optim=generator_optim, generator_kwargs=generator_kwargs,
             adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
+            fixed_noise_size=fixed_noise_size,
             device=device,
             folder=folder,
-            enable_tensorboard=enable_tensorboard
         )
         self.lmbda_grad = lmbda_grad
 
     def _define_loss(self):
         self.generator_loss_fn = wasserstein_loss
         self.adversariat_loss_fn = wasserstein_loss
-        self.gradient_penalty_fn = gradient_penalty
+        self.gradient_penalty_fn = self.gradient_penalty
 
     def gradient_penalty(self, real_images, fake_images):
         alpha = torch.Tensor(np.random.random((real_images.size(0), 1, 1, 1))).to(self.device)

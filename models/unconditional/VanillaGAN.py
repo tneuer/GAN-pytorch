@@ -1,7 +1,7 @@
 import torch
 
 from torch.nn import BCELoss
-from models.DualGAN import DualGAN
+from models.unconditional.DualGAN import DualGAN
 
 
 class VanillaGAN(DualGAN):
@@ -10,32 +10,30 @@ class VanillaGAN(DualGAN):
     #########################################################################
     def __init__(
             self,
-            generator_architecture,
-            adversariat_architecture,
-            z_dim,
+            generator,
+            adversariat,
             in_dim,
+            z_dim,
             optim=None,
             optim_kwargs=None,
             generator_optim=None,
             generator_kwargs=None,
             adversariat_optim=None,
             adversariat_kwargs=None,
+            fixed_noise_size=32,
             device=None,
             folder="./VanillaGAN",
-            enable_tensorboard=True):
+            ngpu=None):
 
-        assert adversariat_architecture[-1][0] == torch.nn.Sigmoid, (
-            "Last layer activation function of adversariat needs to be 'torch.nn.sigmoid'."
-        )
-        super(VanillaGAN, self).__init__(
-            generator_architecture=generator_architecture, adversariat_architecture=adversariat_architecture,
-            z_dim=z_dim, in_dim=in_dim,
+        DualGAN.__init__(
+            self,
+            generator=generator, adversariat=adversariat,
+            z_dim=z_dim, in_dim=in_dim, adv_type="Discriminator",
             optim=optim, optim_kwargs=optim_kwargs,
             generator_optim=generator_optim, generator_kwargs=generator_kwargs,
             adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
-            device=device,
-            folder=folder,
-            enable_tensorboard=enable_tensorboard
+            fixed_noise_size=fixed_noise_size,
+            device=device, folder=folder, ngpu=ngpu
         )
 
     def _define_loss(self):

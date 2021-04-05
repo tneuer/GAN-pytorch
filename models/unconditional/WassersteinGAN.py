@@ -2,7 +2,7 @@ import torch
 
 import numpy as np
 
-from models.DualGAN import DualGAN
+from models.unconditional.DualGAN import DualGAN
 from utils.utils import wasserstein_loss
 
 
@@ -12,32 +12,30 @@ class WassersteinGAN(DualGAN):
     #########################################################################
     def __init__(
             self,
-            generator_architecture,
-            adversariat_architecture,
-            z_dim,
+            generator,
+            adversariat,
             in_dim,
+            z_dim,
             optim=None,
             optim_kwargs=None,
             generator_optim=None,
             generator_kwargs=None,
             adversariat_optim=None,
             adversariat_kwargs=None,
+            fixed_noise_size=32,
             device=None,
-            folder="./WassersteinGAN",
-            enable_tensorboard=True):
+            folder="./WassersteinGAN"):
 
-        assert adversariat_architecture[-1][0] == torch.nn.Linear, (
-            "Last layer activation function of adversariat needs to be 'torch.nn.Linear'."
-        )
-        super(WassersteinGAN, self).__init__(
-            generator_architecture=generator_architecture, adversariat_architecture=adversariat_architecture,
-            z_dim=z_dim, in_dim=in_dim,
+        DualGAN.__init__(
+            self,
+            generator=generator, adversariat=adversariat,
+            z_dim=z_dim, in_dim=in_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,
             generator_optim=generator_optim, generator_kwargs=generator_kwargs,
             adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
+            fixed_noise_size=fixed_noise_size,
             device=device,
             folder=folder,
-            enable_tensorboard=enable_tensorboard
         )
 
     def _define_loss(self):

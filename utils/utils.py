@@ -1,3 +1,4 @@
+import torch
 import pickle
 
 import numpy as np
@@ -61,3 +62,22 @@ def wasserstein_loss(input, target):
         return -torch.mean(input)
     elif np.all((target==0).cpu().numpy()):
         return torch.mean(input)
+
+
+def concatenate(tensor1, tensor2):
+    assert tensor1.shape[0] == tensor2.shape[0], (
+        "Tensors to concatenate must have same dim 0. Tensor1: {}. Tensor2: {}.".format(tensor1.shape[0], tensor2.shape[0])
+    )
+    assert len(tensor2.shape) == 2, (
+        "tensor2 must have 2 dimensions. Given: {}.".format(len(tensor2.shape))
+    )
+    if len(tensor1.shape) == 2:
+        return torch.cat((tensor1, tensor2), axis=1)
+    elif len(tensor1.shape) == 4:
+        batch_size = tensor2.shape[0]
+        y_dim = tensor2.shape[1]
+        tensor2 = torch.reshape(tensor2, shape=(batch_size, y_dim, 1, 1))
+        tensor2 = torch.tile(tensor2, dims=(1, 1, *tensor1.shape[2:]))
+        return torch.cat((tensor1, tensor2), axis=1)
+    else:
+        raise NotImplementedError("tensor1 one must have 2 or 4 dimensions. Given: {}.".format(len(tensor1.shape)))
