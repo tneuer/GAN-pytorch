@@ -87,7 +87,7 @@ if __name__ == '__main__':
     gan_model = ConditionalWassersteinGAN(
         generator=generator, adversariat=adversariat,
         x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/ConditionalGAN", optim=None,
-        generator_kwargs={"lr": lr_gen}, adversariat_kwargs={"lr": lr_adv}, fixed_noise_size=16
+        optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
     )
     gan_model.summary(save=True)
     gan_model.fit(

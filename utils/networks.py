@@ -31,7 +31,8 @@ class NeuralNetwork(Module):
         self._validate_input()
 
         if self.ngpu is not None and self.ngpu > 1:
-            self.network = torch.nn.DataParallel(self.network)
+            if self.ngpu > 1:
+                self.network = torch.nn.DataParallel(self.network)
 
     def forward(self, x):
         output = self.network(x)

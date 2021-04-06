@@ -23,10 +23,6 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
             adv_type,
             optim=None,
             optim_kwargs=None,
-            generator_optim=None,
-            generator_kwargs=None,
-            adversariat_optim=None,
-            adversariat_kwargs=None,
             fixed_noise_size=32,
             device=None,
             folder="./DualGAN",
@@ -36,12 +32,12 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
         gen_in_dim = get_input_dim(dim1=z_dim, dim2=y_dim)
         DualGAN.__init__(
             self, generator=generator, adversariat=adversariat, x_dim=adv_in_dim, z_dim=gen_in_dim,
-            adv_type=adv_type, optim=optim, optim_kwargs=optim_kwargs, generator_optim=generator_optim,
-            generator_kwargs=generator_kwargs, adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
+            adv_type=adv_type, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=0
         )
         ConditionalGenerativeModel.__init__(
-            self, x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, folder=None, ngpu=ngpu, fixed_noise_size=fixed_noise_size
+            self, x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, folder=None, ngpu=ngpu,
+            fixed_noise_size=fixed_noise_size, device=device
         )
 
 

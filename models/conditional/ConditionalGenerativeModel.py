@@ -19,9 +19,9 @@ class ConditionalGenerativeModel(GenerativeModel):
     #########################################################################
     # Actions before training
     #########################################################################
-    def __init__(self, x_dim, z_dim, y_dim, folder, ngpu, fixed_noise_size):
+    def __init__(self, x_dim, z_dim, y_dim, folder, ngpu, fixed_noise_size, device):
         GenerativeModel.__init__(
-            self, x_dim=x_dim, z_dim=z_dim, folder=folder, fixed_noise_size=fixed_noise_size, ngpu=ngpu
+            self, x_dim=x_dim, z_dim=z_dim, folder=folder, fixed_noise_size=fixed_noise_size, ngpu=ngpu, device=device
         )
         self.y_dim = [y_dim] if isinstance(y_dim, int) else y_dim
         self.hyperparameters["y_dim"] = y_dim
@@ -51,7 +51,7 @@ class ConditionalGenerativeModel(GenerativeModel):
     # Actions during training
     #########################################################################
     def fit(self, X_train, y_train, X_test=None, y_test=None, epochs=5, batch_size=32, steps=None,
-            log_every=100, save_model_every=None, save_images_every=None, save_losses_every=None, enable_tensorboard=True):
+            log_every=100, save_model_every=None, save_images_every=None, save_losses_every="1e", enable_tensorboard=True):
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = self._set_up_training(
             X_train, y_train, X_test=X_test, y_test=y_test, epochs=epochs, batch_size=batch_size, steps=steps,
             log_every=log_every, save_model_every=save_model_every, save_images_every=save_images_every,

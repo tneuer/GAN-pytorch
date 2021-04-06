@@ -20,17 +20,10 @@ class DualGAN(GenerativeModel):
             adv_type,
             optim=None,
             optim_kwargs=None,
-            generator_optim=None,
-            generator_kwargs=None,
-            adversariat_optim=None,
-            adversariat_kwargs=None,
             fixed_noise_size=32,
             device=None,
             folder="./DualGAN",
             ngpu=0):
-        self.device = device
-        if self.device is None:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.generator = Generator(generator, input_size=z_dim, ngpu=ngpu)
         self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, ngpu=ngpu)
@@ -38,25 +31,11 @@ class DualGAN(GenerativeModel):
         self.neural_nets = {"Generator": self.generator, "Adversariat": self.adversariat}
         self._define_optimizers(
             optim=optim, optim_kwargs=optim_kwargs,
-            generator_optim=generator_optim, generator_kwargs=generator_kwargs,
-            adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs
         )
-        GenerativeModel.__init__(self, x_dim=x_dim, z_dim=z_dim, folder=folder, ngpu=ngpu, fixed_noise_size=fixed_noise_size)
-
-    def _define_optimizers(
-        self, optim, optim_kwargs, generator_optim, generator_kwargs,
-        adversariat_optim, adversariat_kwargs):
-        if (optim is None) and (generator_optim is None):
-            generator_optim = self._default_optimizer()
-        if (optim is None) and (adversariat_optim is None):
-            adversariat_optim = self._default_optimizer()
-        generator_optim = optim if generator_optim is None else generator_optim
-        generator_kwargs = optim_kwargs if generator_kwargs is None else generator_kwargs
-        adversariat_optim = optim if adversariat_optim is None else adversariat_optim
-        adversariat_kwargs = optim_kwargs if adversariat_kwargs is None else adversariat_kwargs
-        optimizer_generator = generator_optim(params=self.generator.parameters(), **generator_kwargs)
-        optimizer_adversariat = adversariat_optim(params=self.adversariat.parameters(), **adversariat_kwargs)
-        self.optimizers = {"Generator": optimizer_generator, "Adversariat": optimizer_adversariat}
+        GenerativeModel.__init__(
+            self, x_dim=x_dim, z_dim=z_dim, folder=folder, ngpu=ngpu,
+            fixed_noise_size=fixed_noise_size, device=device
+        )
 
 
     #########################################################################

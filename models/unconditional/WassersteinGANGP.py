@@ -18,25 +18,21 @@ class WassersteinGANGP(DualGAN):
             z_dim,
             optim=None,
             optim_kwargs=None,
-            generator_optim=None,
-            generator_kwargs=None,
-            adversariat_optim=None,
-            adversariat_kwargs=None,
             fixed_noise_size=32,
             lmbda_grad=10,
             device=None,
-            folder="./WassersteinGANGP"):
+            folder="./WassersteinGANGP",
+            ngpu=None):
 
         DualGAN.__init__(
             self,
             generator=generator, adversariat=adversariat,
             z_dim=z_dim, x_dim=x_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,
-            generator_optim=generator_optim, generator_kwargs=generator_kwargs,
-            adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
             fixed_noise_size=fixed_noise_size,
             device=device,
             folder=folder,
+            ngpu=ngpu
         )
         self.lmbda_grad = lmbda_grad
 

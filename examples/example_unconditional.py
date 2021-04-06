@@ -78,8 +78,8 @@ if __name__ == '__main__':
     adversariat = MyAdversariat(x_dim=im_dim)
     gan_model = WassersteinGAN(
         generator=generator, adversariat=adversariat,
-        z_dim=z_dim, x_dim=im_dim, folder="TrainedModels/GAN", optim=torch.optim.RMSprop,
-        generator_kwargs={"lr": lr_gen}, adversariat_kwargs={"lr": lr_adv}
+        z_dim=z_dim, x_dim=im_dim, folder="TrainedModels/GAN", optim={"Generator": torch.optim.Adam},
+        optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}
     )
     gan_model.summary(save=True)
     gan_model.fit(
