@@ -19,11 +19,16 @@ class GenerativeModel():
     #########################################################################
     # Actions before training
     #########################################################################
-    def __init__(self, x_dim, z_dim, folder, ngpu, fixed_noise_size):
+    def __init__(self, x_dim, z_dim, folder, ngpu, fixed_noise_size, device):
         self.x_dim = x_dim
         self.z_dim = z_dim
-        self.ngpu = ngpu
+        self.ngpu = ngpu if ngpu is not None else 0
         self.fixed_noise_size = fixed_noise_size
+        self.device = device
+        if self.device is None:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        elif device not in ["cuda", "cpu"]:
+            raise ValueError("device must be cuda or cpu.")
 
         if folder is not None:
             folder = folder if not folder.endswith("/") else folder[-1]
@@ -53,8 +58,46 @@ class GenerativeModel():
         assert hasattr(self, "optimizers"), "Model must have attribute 'optimizers'."
         assert hasattr(self, "generator_loss_fn"), "DualGAN needs attribute 'generator_loss_fn'."
         assert hasattr(self, "adversariat_loss_fn"), "DualGAN needs attribute 'adversariat_loss_fn'."
+        assert isinstance(self.ngpu, int) and self.ngpu >= 0, "ngpu must be positive integer. Given: {}.".format(ngpu)
         for name, _ in self.neural_nets.items():
             assert name in self.optimizers, "{} does not have a corresponding optimizer but is needed.".format(name)
+
+    def _define_optimizers(self, optim, optim_kwargs):
+        self._opt_kwargs = {}
+        for name, _ in self.neural_nets.items():
+            self._opt_kwargs[name] = {}
+        if isinstance(optim_kwargs, dict):
+            self._check_dict_keys(optim_kwargs, where="_define_optimizers")
+            for name, opt_kwargs in optim_kwargs.items():
+                self._opt_kwargs[name] = opt_kwargs
+
+        self._opt = {}
+        if optim is None:
+            for name, _ in self.neural_nets.items():
+                self._opt[name] = self._default_optimizer()
+        elif isinstance(optim, dict):
+            self._check_dict_keys(optim, where="_define_optimizers")
+            for name, opt in optim.items():
+                self._opt[name] = opt
+            for name, _ in self.neural_nets.items():
+                if name not in self._opt:
+                    self._opt[name] = self._default_optimizer()
+        else:
+            for name, _ in self.neural_nets.items():
+                self._opt[name] = optim
+
+        self.optimizers = {}
+        for name, network in self.neural_nets.items():
+            self.optimizers[name] = self._opt[name](params=network.parameters(), **self._opt_kwargs[name])
+
+    def _check_dict_keys(self, param_dict, where):
+        for name, _ in param_dict.items():
+            if name not in self.neural_nets:
+                available_nets = [name for name, _ in self.neural_nets.items()]
+                raise ValueError("Error in {}: {} not in neural_nets. Must be one of: {}.".format(
+                    where, name, available_nets)
+                )
+
 
     def _define_loss(self):
         raise NotImplementedError("'_define_loss' must be implemented for objects of type 'GenerativeModel'.")
@@ -100,6 +143,7 @@ class GenerativeModel():
                 self.steps[name] = 1
         else:
             assert isinstance(steps, dict), "steps parameter must be of type dict. Given: {}.".format(type(steps))
+            self._check_dict_keys(steps, where="_create_steps")
             self.steps = steps
             for name, _ in self.neural_nets.items():
                 if name not in self.steps:
@@ -133,7 +177,7 @@ class GenerativeModel():
     # Actions during training
     #########################################################################
     def fit(self, X_train, X_test=None, epochs=5, batch_size=32, steps=None,
-        log_every=100, save_model_every=None, save_images_every=None, save_losses_every=None, enable_tensorboard=True):
+        log_every=100, save_model_every=None, save_images_every=None, save_losses_every="1e", enable_tensorboard=True):
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = self._set_up_training(
             X_train, y_train=None, X_test=X_test, y_test=None, epochs=epochs, batch_size=batch_size, steps=steps,
             log_every=log_every, save_model_every=save_model_every, save_images_every=save_images_every,
