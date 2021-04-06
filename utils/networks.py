@@ -2,6 +2,8 @@ import re
 import json
 import torch
 
+import numpy as np
+
 from torch import nn
 from torchsummary import summary
 from torch.nn import Module, Sequential
@@ -24,16 +26,59 @@ class NeuralNetwork(Module):
             type(network[-1])
             self.input_type = "Sequential"
         except TypeError:
-            self.input_type = "Custom"
+            self.input_type = "Object"
         self.network = network
+        self._validate_input()
 
-        if self.ngpu > 1:
+        if self.ngpu is not None and self.ngpu > 1:
             self.network = torch.nn.DataParallel(self.network)
-
 
     def forward(self, x):
         output = self.network(x)
         return output
+
+    def _validate_input(self):
+        iterative_layers = self._get_iterative_layers()
+
+        for layer in iterative_layers:
+            if "in_features" in layer.__dict__:
+                first_input = layer.__dict__["in_features"]
+                break
+            elif "in_channels" in layer.__dict__:
+                first_input = layer.__dict__["in_channels"]
+                break
+            elif "num_features" in layer.__dict__:
+                first_input = layer.__dict__["num_features"]
+                break
+
+        if np.prod([first_input]) == np.prod(self.input_size):
+            pass
+        elif (len(self.input_size) > 1) & (self.input_size[0] == first_input):
+            pass
+        else:
+            raise TypeError(
+                "\n\tInput mismatch for {}:\n".format(self.name) +
+                "\t\tFirst input layer 'in_features' or 'in_channels': {}. self.input_size: {}.\n".format(
+                    first_input, self.input_size
+                ) +
+                "\t\tMaybe forgot to adjust size of input layer for y_dim."
+            )
+        return True
+
+    def _get_iterative_layers(self):
+        if self.input_type == "Sequential":
+            return self.network
+        elif self.input_type == "Object":
+            iterative_net = []
+            for _, layers in self.network.__dict__["_modules"].items():
+                try:
+                    for layer in layers:
+                        iterative_net.append(layer)
+                except TypeError:
+                    iterative_net.append(layers)
+            return iterative_net
+        else:
+            raise NotImplemented("Network must be Sequential or Object.")
 
 
     #########################################################################
@@ -56,10 +101,10 @@ class Adversariat(NeuralNetwork):
     def __init__(self, network, input_size, adv_type, ngpu):
         valid_types = ["Discriminator", "Critic"]
         if adv_type == "Discriminator":
-            valid_last_layer = torch.nn.Sigmoid
+            valid_last_layer = [torch.nn.Sigmoid]
             self._type = "Discriminator"
         elif adv_type == "Critic":
-            valid_last_layer = torch.nn.Linear
+            valid_last_layer = [torch.nn.Linear, torch.nn.Identity]
             self._type = "Critic"
         else:
             raise TypeError("adv_type must be one of {}.".format(valid_types))
@@ -68,7 +113,7 @@ class Adversariat(NeuralNetwork):
             last_layer_type = type(network[-1])
         except TypeError:
             last_layer_type = type(network.__dict__["_modules"]["output"])
-        assert last_layer_type == valid_last_layer, (
+        assert last_layer_type in valid_last_layer, (
             "Last layer activation function of {} needs to be '{}'.".format(adv_type, valid_last_layer)
         )
 
