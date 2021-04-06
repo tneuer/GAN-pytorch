@@ -14,23 +14,27 @@ You need python 3.5 or above. Then:
 ## How to use
 The basic idea is that the user provides discriminator and generator networks, and the library takes care of training them in a selected GAN setting:
 ```
-from vegans import WassersteinGAN
-from vegans.utils import plot_losses, plot_image_samples
+from vegans.models.GAN import WassersteinGAN
+from vegans.utils import plot_losses, plot_images
 
-netD = ### Your discriminator/critic (torch.nn.Module)
-netG = ### Your generator (torch.nn.Module)
-dataloader = ### Your dataloader (torch.utils.data.DataLoader)
+generator = ### Your generator (torch.nn.Module)
+adversariat = ### Your discriminator/critic (torch.nn.Module)
+X_train = ### Your dataloader (torch.utils.data.DataLoader) or pd.DataFrame
 
-# Build a Wasserstein GAN
-gan = WGAN(netG, netD, dataloader, nr_epochs=20)
+z_dim = 64
+x_dim = X_train.shape[1:] # [nr_channels, height, width]
 
-# train it
-gan.train()
+# Build a WassersteinGAN
+gan = WassersteinGAN(generator, discriminator, z_dim, x_dim)
 
-# vizualise results
-img_list, D_losses, G_losses = gan.get_training_results()
-plot_losses(G_losses, D_losses)
-plot_image_samples(img_list, 50)
+# Fit the WassersteinGAN
+gan.fit(X_train)
+
+# Vizualise results
+images, losses = gan.get_training_results()
+images = images.reshape(-1, *samples.shape[2:]) # remove nr_channels
+plot_images(images)
+plot_losses(losses)
 ```
 
 You can currently use the following GANs:
@@ -38,23 +42,26 @@ You can currently use the following GANs:
 * `WassersteinGAN`: [Wasserstein GAN](https://arxiv.org/abs/1701.07875)
 * `WassersteinGANGP`: [Wasserstein GAN with gradient penalty](https://arxiv.org/abs/1704.00028)
 
-All GANs come with a conditional implementation to allow for the input of labels.
+All current GAN implementations come with a conditional variant to allow for the usage of training labels to produce specific outputs:
+
+- ConditionalVanillaGAN
+- ConditionalWassersteinGAN
+- ...
 
 ### Slightly More Details:
-All of the GAN objects inherit from a `GAN` base class. When building any such GAN, you must give in argument a generator and discriminator networks (some `torch.nn.Module`), as well as a `torch.utils.data.DataLoader`. In addition, you can specify some parameters supported by all GAN implementations:
-* `optimizer_D` and `optimizer_G`: some PyTorch optimizers (from `torch.optim`) for the discriminator and generator networks. By defaults those are set with default optimization parameters suggested in the original papers.
-* `nr_epochs`: the number of epochs (default: 5)
-* `nz`: size of the noise vector (input of the generator) - by default `nz=100`.
-* `save_every`: VeGANs will store some samples produced by the generator every `save_every` iteration. Default: 500
-* `fixed_noise_size`:  The number of samples to save (from fixed noise vectors)
-* `print_every`: The number of iterations between printing training progress. Default: 50
+All of the GAN objects inherit from a `GenerativeModel` base class. When building any such GAN, you must give in argument a generator and discriminator networks (some `torch.nn.Module`), as well as a the dimensions of the latent space `z_dim` and input dimension of the images `x_dim`. In addition, you can specify some parameters supported by all GAN implementations:
+* `optim`:
+* `optim_kwargs`:
+* `fixed_noise_size`: The number of samples to save (from fixed noise vectors)
+* `device`:
+* `folder`:
+* `ngpu`:
 
-Finally, when calling `train()` you can specify some parameters specific to each GAN. For example, for the Wasserstein GAN we can do:
-```
-gan = WGAN(netG, netD, dataloader)
-gan.train(clip_value=0.1)
-```
-This will train a Wasserstein GAN with clipping values of `0.1` (instead of the default `0.01`).
+The fit function takes the following optional arguments:
+
+- 
+
+
 
 If you are researching new GAN training algorithms, you may find it useful to inherit from the `GAN` base class.
 
@@ -71,3 +78,34 @@ Some of the code has been inspired by some existing GAN implementations:
 * https://github.com/eriklindernoren/PyTorch-GAN
 * https://github.com/martinarjovsky/WassersteinGAN
 * https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html
+
+## TODO
+
+- GAN Implementations
+  - BEGAN
+  - EBGAN
+  - LR-GAN
+  - BicycleGAN
+  - VAEGAN
+  - CycleGAN
+  - InfoGAN
+  - Least Squares GAN
+  - Pix2Pix
+  - WassersteinGAN SpectralNorm
+  - DiscoGAN
+  - Adversarial Autoencoder
+- Layers
+  - Inception
+  - Residual Block
+- Other
+  - Feature loss
+  - Do not save Discriminator 
+  - Translate examples to jupyter
+  - How to make your own architecture 
+    - _define_optimizers
+    - fit
+    - calculate_losses
+  - ~~folder = None~~
+  - save every = None
+  - ~~default optimizers~~
+

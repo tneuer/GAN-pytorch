@@ -19,7 +19,7 @@
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "build_test",
 			"selector": "source.python",
-			"shell_cmd": "PYTHONPATH=./ /home/thomas/miniconda3/envs/pytorch38/bin/python3 -u examples/custom_example_conditional.py",
+			"shell_cmd": "PYTHONPATH=./ /home/thomas/miniconda3/envs/pytorch38/bin/python3 -u examples/example_image_to_image.py",
 			"working_dir": "."
 		},
 		{
