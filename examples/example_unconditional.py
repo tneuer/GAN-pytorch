@@ -4,8 +4,8 @@ import numpy as np
 import vegans.utils.utils as utils
 
 from torch import nn
+from vegans.utils.layers import LayerReshape, LayerPrintSize
 from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
-from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
 
 if __name__ == '__main__':
 

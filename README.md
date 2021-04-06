@@ -14,7 +14,7 @@ You need python 3.5 or above. Then:
 ## How to use
 The basic idea is that the user provides discriminator and generator networks, and the library takes care of training them in a selected GAN setting:
 ```
-from vegans.models.GAN import WassersteinGAN
+from vegans.GAN import WassersteinGAN
 from vegans.utils import plot_losses, plot_images
 
 generator = ### Your generator (torch.nn.Module)

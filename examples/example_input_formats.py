@@ -4,9 +4,8 @@ import numpy as np
 import vegans.utils.utils as utils
 
 from torch import nn
-from vegans.utils.utils import plot_images, plot_losses
+from vegans.utils.layers import LayerReshape, LayerPrintSize
 from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
-from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
 
 
 def call_gan_training(generator, adversariat):
@@ -29,8 +28,8 @@ def call_gan_training(generator, adversariat):
         enable_tensorboard=True,
     )
     samples, losses = gan_model.get_training_results(by_epoch=False)
-    plot_images(images=samples.reshape(-1, *samples.shape[2:]), show=False)
-    plot_losses(losses=losses, show=True)
+    utils.plot_images(images=samples.reshape(-1, *samples.shape[2:]), show=False)
+    utils.plot_losses(losses=losses, show=True)
 
 if __name__ == '__main__':
 

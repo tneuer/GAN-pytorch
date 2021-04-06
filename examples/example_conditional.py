@@ -5,8 +5,7 @@ import vegans.utils.utils as utils
 
 from torch import nn
 from sklearn.preprocessing import OneHotEncoder
-from vegans.utils.utils import plot_losses, plot_images, get_input_dim
-from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
+from vegans.utils.layers import LayerReshape, LayerPrintSize
 from vegans.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP
 
 
@@ -32,8 +31,8 @@ if __name__ == '__main__':
     # Flat network
     #########################################################################
     z_dim = 32
-    gen_in_dim = get_input_dim(dim1=z_dim, dim2=label_dim)
-    adv_in_dim = get_input_dim(dim1=im_dim, dim2=label_dim)
+    gen_in_dim = utils.get_input_dim(dim1=z_dim, dim2=label_dim)
+    adv_in_dim = utils.get_input_dim(dim1=im_dim, dim2=label_dim)
 
     class MyGenerator(nn.Module):
         def __init__(self, z_dim):
