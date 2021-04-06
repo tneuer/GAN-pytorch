@@ -44,26 +44,33 @@ You can currently use the following GANs:
 
 All current GAN implementations come with a conditional variant to allow for the usage of training labels to produce specific outputs:
 
-- ConditionalVanillaGAN
-- ConditionalWassersteinGAN
+- `ConditionalVanillaGAN`
+- `ConditionalWassersteinGAN`
 - ...
 
 ### Slightly More Details:
 All of the GAN objects inherit from a `GenerativeModel` base class. When building any such GAN, you must give in argument a generator and discriminator networks (some `torch.nn.Module`), as well as a the dimensions of the latent space `z_dim` and input dimension of the images `x_dim`. In addition, you can specify some parameters supported by all GAN implementations:
-* `optim`:
-* `optim_kwargs`:
-* `fixed_noise_size`: The number of samples to save (from fixed noise vectors)
-* `device`:
-* `folder`:
-* `ngpu`:
+* `optim`: The optimizer to use for all networks during training. If `None` a default optimizer (probably either `torch.optim.Adam` or `torch.optim.RMSprop`) is chosen by the specific model. A `dict` type with appropriate keys can be passed to specify different optimizers for different networks.
+* `optim_kwargs`:  The optimizer default arguments. A `dict` type with appropriate keys can be passed to specify different optimizer keyword arguments for different networks.
+* `fixed_noise_size`: The number of samples to save (from fixed noise vectors). These are saved within Tensorboard (if `enable_tensorboard=True` during fitting) and in the `Model/images` subfolder.
+* `device`: "cuda" (GPU) or "cpu" depending on the available resources.
+* `folder`: Folder which will contain all results of the network (architecture, model.torch, images, loss plots, etc.)
+* `ngpu`: Number of gpus used during training
 
 The fit function takes the following optional arguments:
 
-- 
+- `epochs`: Number of epochs to train the algorithm. Default: 5
+- `batch_size`: Size of one batch. Should not be too large: Default: 32
+- `steps`: How often one network should be trained against another. Must be `dict` type with appropriate names. 
+- `log_every`: Determines after how many batches a message should be printed to the console informing about the current state of training. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: 100
+- `save_model_every`: Determines after how many batches the model should be saved. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: None
+- `save_images_every`: Determines after how many batches sample images and loss curves should be saved. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: None
+- `save_losses_every`: Determines after how many batches the losses should be calculated and saved. Figure is shown after `save_images_every` . String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: "1e" 
+- `enable_tensorboard`: Determines after how many batches a message should be printed to the console informing about the current state of training. Default: True
 
 
 
-If you are researching new GAN training algorithms, you may find it useful to inherit from the `GAN` base class.
+If you are researching new GAN training algorithms, you may find it useful to inherit from the `GenerativeModel` or  `ConditionalGenerativeModel` base class.
 
 ### Learn more:
 Currently the best way to learn more about how to use VeGANs is to have a look at the example [notebooks](https://github.com/unit8co/vegans/tree/master/notebooks).
@@ -98,14 +105,20 @@ Some of the code has been inspired by some existing GAN implementations:
   - Inception
   - Residual Block
 - Other
+  
   - Feature loss
+  
   - Do not save Discriminator 
+  
   - Translate examples to jupyter
+  
   - How to make your own architecture 
+  
     - _define_optimizers
+    - default_optimizer
+    - DualGAN
     - fit
     - calculate_losses
-  - ~~folder = None~~
-  - save every = None
-  - ~~default optimizers~~
+  
+    
 
