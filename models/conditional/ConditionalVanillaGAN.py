@@ -12,7 +12,7 @@ class ConditionalVanillaGAN(ConditionalDualGAN):
             self,
             generator,
             adversariat,
-            in_dim,
+            x_dim,
             z_dim,
             y_dim,
             optim=None,
@@ -29,13 +29,16 @@ class ConditionalVanillaGAN(ConditionalDualGAN):
         ConditionalDualGAN.__init__(
             self,
             generator=generator, adversariat=adversariat,
-            in_dim=in_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Discriminator",
+            x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Discriminator",
             optim=optim, optim_kwargs=optim_kwargs,
             generator_optim=generator_optim, generator_kwargs=generator_kwargs,
             adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
             fixed_noise_size=fixed_noise_size,
             device=device, folder=folder, ngpu=ngpu
         )
+
+    def _default_optimizer(self):
+        return torch.optim.Adam
 
     def _define_loss(self):
         self.generator_loss_fn = BCELoss()

@@ -14,7 +14,7 @@ class WassersteinGAN(DualGAN):
             self,
             generator,
             adversariat,
-            in_dim,
+            x_dim,
             z_dim,
             optim=None,
             optim_kwargs=None,
@@ -29,7 +29,7 @@ class WassersteinGAN(DualGAN):
         DualGAN.__init__(
             self,
             generator=generator, adversariat=adversariat,
-            z_dim=z_dim, in_dim=in_dim, adv_type="Critic",
+            z_dim=z_dim, x_dim=x_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,
             generator_optim=generator_optim, generator_kwargs=generator_kwargs,
             adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
@@ -37,6 +37,12 @@ class WassersteinGAN(DualGAN):
             device=device,
             folder=folder,
         )
+
+    def _default_optimizer(self):
+        return torch.optim.RMSprop
+
+    def _default_optimizer(self):
+        return torch.optim.RMSprop
 
     def _define_loss(self):
         self.generator_loss_fn = wasserstein_loss

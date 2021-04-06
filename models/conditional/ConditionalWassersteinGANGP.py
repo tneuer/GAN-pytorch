@@ -14,7 +14,7 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
             self,
             generator,
             adversariat,
-            in_dim,
+            x_dim,
             z_dim,
             y_dim,
             optim=None,
@@ -31,7 +31,7 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
         ConditionalDualGAN.__init__(
             self,
             generator=generator, adversariat=adversariat,
-            in_dim=in_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Critic",
+            x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,
             generator_optim=generator_optim, generator_kwargs=generator_kwargs,
             adversariat_optim=adversariat_optim, adversariat_kwargs=adversariat_kwargs,
@@ -40,6 +40,9 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
             folder=folder,
         )
         self.lmbda_grad = lmbda_grad
+
+    def _default_optimizer(self):
+        return torch.optim.RMSprop
 
     def _define_loss(self):
         self.generator_loss_fn = wasserstein_loss
