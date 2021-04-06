@@ -27,10 +27,10 @@ class ConditionalGenerativeModel(GenerativeModel):
         self.hyperparameters["y_dim"] = y_dim
 
     def _set_up_training(self, X_train, y_train, X_test, y_test, epochs, batch_size, steps,
-        log_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard):
+        print_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard):
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = super()._set_up_training(
             X_train, y_train, X_test, y_test, epochs, batch_size, steps,
-            log_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard
+            print_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard
         )
 
         if len(self.y_dim) == 1:
@@ -51,20 +51,20 @@ class ConditionalGenerativeModel(GenerativeModel):
     # Actions during training
     #########################################################################
     def fit(self, X_train, y_train, X_test=None, y_test=None, epochs=5, batch_size=32, steps=None,
-            log_every=100, save_model_every=None, save_images_every=None, save_losses_every="1e", enable_tensorboard=True):
+            print_every="1e", save_model_every=None, save_images_every=None, save_losses_every="1e", enable_tensorboard=True):
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = self._set_up_training(
             X_train, y_train, X_test=X_test, y_test=y_test, epochs=epochs, batch_size=batch_size, steps=steps,
-            log_every=log_every, save_model_every=save_model_every, save_images_every=save_images_every,
+            print_every=print_every, save_model_every=save_model_every, save_images_every=save_images_every,
             save_losses_every=save_losses_every, enable_tensorboard=enable_tensorboard
         )
         nr_batches = len(train_dataloader)
         test_x_batch = next(iter(test_dataloader))[0].to(self.device) if X_test is not None else None
         test_y_batch = next(iter(test_dataloader))[1].to(self.device) if X_test is not None else None
-        log_every, save_model_every, save_images_every, save_losses_every = save_periods
+        print_every, save_model_every, save_images_every, save_losses_every = save_periods
         if test_x_batch is not None:
             self.log(
                 X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, batch=0, max_batches=nr_batches,
-                epoch=0, max_epochs=epochs, log_every=log_every, is_train=False, log_images=False
+                epoch=0, max_epochs=epochs, print_every=print_every, is_train=False, log_images=False
             )
 
         for epoch in range(epochs):
@@ -80,16 +80,16 @@ class ConditionalGenerativeModel(GenerativeModel):
                 for name, _ in self.neural_nets.items():
                     self._train(X_batch=X, Z_batch=Z, y_batch=y, who=name)
 
-                if log_every is not None and step % log_every == 0:
+                if print_every is not None and step % print_every == 0:
                     log_kwargs = {
                         "batch": batch, "max_batches": nr_batches, "epoch": epoch, "max_epochs": epochs,
-                        "log_every": log_every, "log_images": False
+                        "print_every": print_every, "log_images": False
                     }
                     self.log(X_batch=X, Z_batch=Z, y_batch=y, is_train=True, writer=writer_train, **log_kwargs)
                     if test_x_batch is not None:
                         self.log(
                             X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, batch=0,
-                            max_batches=nr_batches, epoch=0, max_epochs=epochs, log_every=log_every, is_train=False, log_images=False
+                            max_batches=nr_batches, epoch=0, max_epochs=epochs, print_every=print_every, is_train=False, log_images=False
                         )
 
                 if save_model_every is not None and step % save_model_every == 0:
@@ -101,7 +101,8 @@ class ConditionalGenerativeModel(GenerativeModel):
 
                 if save_losses_every is not None and step % save_losses_every == 0:
                     self._log_losses(X_batch=X, Z_batch=Z, y_batch=y, is_train=True)
-                    self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, is_train=False)
+                    if test_x_batch is not None:
+                        self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, is_train=False)
 
         self._clean_up(writers=[writer_train, writer_test])
 
@@ -112,7 +113,7 @@ class ConditionalGenerativeModel(GenerativeModel):
     #########################################################################
     # Logging during training
     #########################################################################
-    def log(self, X_batch, Z_batch, y_batch, batch, max_batches, epoch, max_epochs, log_every,
+    def log(self, X_batch, Z_batch, y_batch, batch, max_batches, epoch, max_epochs, print_every,
             is_train=True, log_images=False, writer=None):
         step = epoch*max_batches + batch
         if X_batch is not None:
@@ -122,7 +123,7 @@ class ConditionalGenerativeModel(GenerativeModel):
             self._log_images(images=self.generate(y=self.fixed_labels, z=self.fixed_noise), step=step, writer=writer)
 
         if is_train:
-            self._summarise_batch(batch, max_batches, epoch, max_epochs, log_every)
+            self._summarise_batch(batch, max_batches, epoch, max_epochs, print_every)
 
     def _log_images(self, images, step, writer):
         assert len(self.adversariat.input_size) > 1, (
@@ -165,7 +166,8 @@ class ConditionalGenerativeModel(GenerativeModel):
         return self(y=y, z=z)
 
     def predict(self, x, y):
-        return self.adversariat(utils.concatenate(x, y).float())
+        inpt = utils.concatenate(x, y).float().to(self.device)
+        return self.adversariat(inpt)
 
     def __call__(self, y, z=None):
         if len(y.shape) == 1:
@@ -173,5 +175,5 @@ class ConditionalGenerativeModel(GenerativeModel):
         if z is None:
             z = self.sample(n=len(y))
 
-        inpt = utils.concatenate(z, y).float()
+        inpt = utils.concatenate(z.to(self.device), y.to(self.device)).float()
         return self.generator(inpt)

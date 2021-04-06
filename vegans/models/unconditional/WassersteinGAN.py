@@ -19,6 +19,7 @@ class WassersteinGAN(DualGAN):
             optim=None,
             optim_kwargs=None,
             fixed_noise_size=32,
+            clip_val=0.01,
             device=None,
             folder="./WassersteinGAN",
             ngpu=None):
@@ -33,6 +34,7 @@ class WassersteinGAN(DualGAN):
             folder=folder,
             ngpu=ngpu
         )
+        self._clip_val = clip_val
 
     def _default_optimizer(self):
         return torch.optim.RMSprop
@@ -53,6 +55,6 @@ class WassersteinGAN(DualGAN):
             self.optimizers[who].step()
             if who == "Adversariat":
                 for p in self.adversariat.parameters():
-                    p.data.clamp_(-0.01, 0.01)
+                    p.data.clamp_(-self._clip_val, self._clip_val)
         else:
             [optimizer.step() for _, optimizer in self.optimizers.items()]

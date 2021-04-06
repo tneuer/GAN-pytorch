@@ -10,11 +10,11 @@ from torch.nn import Module, Sequential
 
 
 class NeuralNetwork(Module):
-    def __init__(self, network, name, input_size, ngpu):
+    def __init__(self, network, name, input_size, device, ngpu):
         super(NeuralNetwork, self).__init__()
         self.name = name
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.input_size = input_size
+        self.device = device
         self.ngpu = ngpu
         if isinstance(input_size, int):
             self.input_size = tuple([input_size])
@@ -27,7 +27,7 @@ class NeuralNetwork(Module):
             self.input_type = "Sequential"
         except TypeError:
             self.input_type = "Object"
-        self.network = network
+        self.network = network.to(self.device)
         self._validate_input()
 
         if self.ngpu is not None and self.ngpu > 1:
@@ -87,19 +87,19 @@ class NeuralNetwork(Module):
     #########################################################################
     def summary(self):
         print("Input shape: ", self.input_size)
-        return summary(self, input_size=self.input_size)
+        return summary(self, input_size=self.input_size, device=self.device)
 
     def __str__(self):
         return self.name
 
 
 class Generator(NeuralNetwork):
-    def __init__(self, network, input_size, ngpu):
-        super(Generator, self).__init__(network, input_size=input_size, name="Generator", ngpu=ngpu)
+    def __init__(self, network, input_size, device, ngpu):
+        super(Generator, self).__init__(network, input_size=input_size, name="Generator", device=device, ngpu=ngpu)
 
 
 class Adversariat(NeuralNetwork):
-    def __init__(self, network, input_size, adv_type, ngpu):
+    def __init__(self, network, input_size, adv_type, device, ngpu):
         valid_types = ["Discriminator", "Critic"]
         if adv_type == "Discriminator":
             valid_last_layer = [torch.nn.Sigmoid]
@@ -115,10 +115,10 @@ class Adversariat(NeuralNetwork):
         except TypeError:
             last_layer_type = type(network.__dict__["_modules"]["output"])
         assert last_layer_type in valid_last_layer, (
-            "Last layer activation function of {} needs to be '{}'.".format(adv_type, valid_last_layer)
+            "Last layer activation function of {} needs to be one of '{}'.".format(adv_type, valid_last_layer)
         )
 
-        super(Adversariat, self).__init__(network, input_size=input_size, name="Adversariat", ngpu=ngpu)
+        super(Adversariat, self).__init__(network, input_size=input_size, name="Adversariat", device=device, ngpu=ngpu)
 
     def predict(self, x):
         return self(x)

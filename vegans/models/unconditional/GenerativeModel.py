@@ -103,7 +103,7 @@ class GenerativeModel():
         raise NotImplementedError("'_define_loss' must be implemented for objects of type 'GenerativeModel'.")
 
     def _set_up_training(self, X_train, y_train, X_test, y_test, epochs, batch_size, steps,
-        log_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard):
+        print_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard):
         assert X_train.shape[2:] == self.adversariat.input_size[1:], (
             "Wrong input shape for adversariat. Given: {}. Needed: {}.".format(X_train.shape, self.adversariat.input_size)
         )
@@ -126,12 +126,12 @@ class GenerativeModel():
 
         self._create_steps(steps=steps)
         save_periods = self._set_up_saver(
-            log_every=log_every, save_model_every=save_model_every, save_images_every=save_images_every,
+            print_every=print_every, save_model_every=save_model_every, save_images_every=save_images_every,
             save_losses_every=save_losses_every, nr_batches=len(train_dataloader)
         )
         self.hyperparameters.update({
             "epochs": epochs, "batch_size": batch_size, "steps": self.steps,
-            "log_every": log_every, "save_model_every": save_model_every, "save_images_every": save_images_every,
+            "print_every": print_every, "save_model_every": save_model_every, "save_images_every": save_images_every,
             "enable_tensorboard": enable_tensorboard, "nr_train": len(X_train), "nr_test": nr_test
         })
         return train_dataloader, test_dataloader, writer_train, writer_test, save_periods
@@ -149,10 +149,10 @@ class GenerativeModel():
                 if name not in self.steps:
                     self.steps[name] = 1
 
-    def _set_up_saver(self, log_every, save_model_every, save_images_every, save_losses_every, nr_batches):
-        if isinstance(log_every, str):
-            save_epochs = float(log_every.split("e")[0])
-            log_every = int(save_epochs*nr_batches)
+    def _set_up_saver(self, print_every, save_model_every, save_images_every, save_losses_every, nr_batches):
+        if isinstance(print_every, str):
+            save_epochs = float(print_every.split("e")[0])
+            print_every = int(save_epochs*nr_batches)
         if save_model_every is not None:
             os.mkdir(self.folder+"models/")
             if isinstance(save_model_every, str):
@@ -170,26 +170,26 @@ class GenerativeModel():
         self.current_timer = time.perf_counter()
         self.batch_training_times = []
 
-        return log_every, save_model_every, save_images_every, save_losses_every
+        return print_every, save_model_every, save_images_every, save_losses_every
 
 
     #########################################################################
     # Actions during training
     #########################################################################
     def fit(self, X_train, X_test=None, epochs=5, batch_size=32, steps=None,
-        log_every=100, save_model_every=None, save_images_every=None, save_losses_every="1e", enable_tensorboard=True):
+        print_every="1e", save_model_every=None, save_images_every=None, save_losses_every="1e", enable_tensorboard=True):
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = self._set_up_training(
             X_train, y_train=None, X_test=X_test, y_test=None, epochs=epochs, batch_size=batch_size, steps=steps,
-            log_every=log_every, save_model_every=save_model_every, save_images_every=save_images_every,
+            print_every=print_every, save_model_every=save_model_every, save_images_every=save_images_every,
             save_losses_every=save_losses_every, enable_tensorboard=enable_tensorboard
         )
         max_batches = len(train_dataloader)
         test_x_batch = iter(test_dataloader).next().to(self.device) if X_test is not None else None
-        log_every, save_model_every, save_images_every, save_losses_every = save_periods
+        print_every, save_model_every, save_images_every, save_losses_every = save_periods
         if test_x_batch is not None:
             self.log(
                 X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), batch=0, max_batches=max_batches, epoch=0, max_epochs=epochs,
-                log_every=log_every, is_train=False, log_images=False
+                print_every=print_every, is_train=False, log_images=False
             )
 
         for epoch in range(epochs):
@@ -204,16 +204,16 @@ class GenerativeModel():
                 for name, _ in self.neural_nets.items():
                     self._train(X_batch=X, Z_batch=Z, who=name)
 
-                if log_every is not None and step % log_every == 0:
+                if print_every is not None and step % print_every == 0:
                     log_kwargs = {
                         "batch": batch, "max_batches": max_batches, "epoch": epoch, "max_epochs": epochs,
-                        "log_every": log_every, "log_images": False
+                        "print_every": print_every, "log_images": False
                     }
                     self.log(X_batch=X, Z_batch=Z, is_train=True, writer=writer_train, **log_kwargs)
                     if test_x_batch is not None:
                         self.log(
                             X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), batch=0, max_batches=max_batches,
-                            epoch=0, max_epochs=epochs, log_every=log_every, is_train=False, log_images=False
+                            epoch=0, max_epochs=epochs, print_every=print_every, is_train=False, log_images=False
                         )
 
                 if save_model_every is not None and step % save_model_every == 0:
@@ -225,7 +225,8 @@ class GenerativeModel():
 
                 if save_losses_every is not None and step % save_losses_every == 0:
                     self._log_losses(X_batch=X, Z_batch=Z, is_train=True)
-                    self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), is_train=False)
+                    if test_x_batch is not None:
+                        self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), is_train=False)
 
         self._clean_up(writers=[writer_train, writer_test])
 
@@ -255,7 +256,7 @@ class GenerativeModel():
     #########################################################################
     # Logging during training
     #########################################################################
-    def log(self, X_batch, Z_batch, batch, max_batches, epoch, max_epochs, log_every,
+    def log(self, X_batch, Z_batch, batch, max_batches, epoch, max_epochs, print_every,
             is_train=True, log_images=False, writer=None):
         step = epoch*max_batches + batch
         if X_batch is not None:
@@ -265,9 +266,9 @@ class GenerativeModel():
             self._log_images(images=self.generator(self.fixed_noise), step=step, writer=writer)
 
         if is_train:
-            self._summarise_batch(batch, max_batches, epoch, max_epochs, log_every)
+            self._summarise_batch(batch, max_batches, epoch, max_epochs, print_every)
 
-    def _summarise_batch(self, batch, max_batches, epoch, max_epochs, log_every):
+    def _summarise_batch(self, batch, max_batches, epoch, max_epochs, print_every):
         step = epoch*max_batches + batch
         max_steps = max_epochs*max_batches
         remaining_batches = max_epochs*max_batches - step
@@ -280,7 +281,7 @@ class GenerativeModel():
 
         self.batch_training_times.append(time.perf_counter() - self.current_timer)
         self.total_training_time = np.sum(self.batch_training_times)
-        time_per_batch = np.mean(self.batch_training_times) / log_every
+        time_per_batch = np.mean(self.batch_training_times) / print_every
 
         print("\n")
         print("Time left: ~{} minutes (Batches remaining: {}).".format(

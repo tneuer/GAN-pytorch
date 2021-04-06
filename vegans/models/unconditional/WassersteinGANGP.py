@@ -62,8 +62,8 @@ class WassersteinGANGP(DualGAN):
     #########################################################################
     # Actions during training
     #########################################################################
-    def _calculate_adversariat_loss(self, X_batch):
-        fake_images = self.generate(n=len(X_batch)).detach()
+    def _calculate_adversariat_loss(self, X_batch, Z_batch):
+        fake_images = self.generate(z=Z_batch).detach()
         fake_predictions = self.adversariat(fake_images)
         real_predictions = self.adversariat(X_batch.float())
 
@@ -75,7 +75,7 @@ class WassersteinGANGP(DualGAN):
         )
         adv_loss_grad = self.gradient_penalty_fn(X_batch, fake_images)
         adv_loss = 0.5*(adv_loss_fake + adv_loss_real) + self.lmbda_grad*adv_loss_grad
-        self.losses.update({
+        self._losses.update({
             "Adversariat": adv_loss,
             "Adversariat_fake": adv_loss_fake,
             "Adversariat_real": adv_loss_real,

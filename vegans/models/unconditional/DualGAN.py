@@ -25,8 +25,10 @@ class DualGAN(GenerativeModel):
             folder="./DualGAN",
             ngpu=0):
 
-        self.generator = Generator(generator, input_size=z_dim, ngpu=ngpu)
-        self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, ngpu=ngpu)
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.generator = Generator(generator, input_size=z_dim, device=device, ngpu=ngpu)
+        self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, device=device, ngpu=ngpu)
 
         self.neural_nets = {"Generator": self.generator, "Adversariat": self.adversariat}
         self._define_optimizers(

@@ -50,7 +50,7 @@ All current GAN implementations come with a conditional variant to allow for the
 
 This can either be used to pass a one hot encoded vector to predict a specific label (generate a certain number in case of mnist: [example_conditional.py](https://github.com/unit8co/vegans/tree/master/examples) ) or it can also be a full image (when for example trying to rotate an image: [example_image_to_image.py](https://github.com/unit8co/vegans/tree/master/examples) ).
 
-Models can either be passed as `torch.nn.Sequential` objects or by defining custom architectures, see [example_input_formats.py](https://github.com/unit8co/vegans/tree/master/examples) 
+Models can either be passed as `torch.nn.Sequential` objects or by defining custom architectures, see [example_input_formats.py](https://github.com/unit8co/vegans/tree/master/examples)
 
 
 
@@ -68,11 +68,11 @@ The fit function takes the following optional arguments:
 
 - `epochs`: Number of epochs to train the algorithm. Default: 5
 - `batch_size`: Size of one batch. Should not be too large: Default: 32
-- `steps`: How often one network should be trained against another. Must be `dict` type with appropriate names. 
-- `log_every`: Determines after how many batches a message should be printed to the console informing about the current state of training. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: 100
+- `steps`: How often one network should be trained against another. Must be `dict` type with appropriate names.
+- `print_every`: Determines after how many batches a message should be printed to the console informing about the current state of training. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: 100
 - `save_model_every`: Determines after how many batches the model should be saved. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: None
 - `save_images_every`: Determines after how many batches sample images and loss curves should be saved. String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: None
-- `save_losses_every`: Determines after how many batches the losses should be calculated and saved. Figure is shown after `save_images_every` . String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: "1e" 
+- `save_losses_every`: Determines after how many batches the losses should be calculated and saved. Figure is shown after `save_images_every` . String indicating fraction or multiples of epoch can be given. I.e. "0.25e" = four times per epoch, "2e" after two epochs. Default: "1e"
 - `enable_tensorboard`: Determines after how many batches a message should be printed to the console informing about the current state of training. Default: True
 
 
@@ -113,20 +113,28 @@ Some of the code has been inspired by some existing GAN implementations:
   - Inception
   - Residual Block
 - Other
-  
+
   - Feature loss
-  
-  - Do not save Discriminator 
-  
+
+  - Improve Doc
+
+  - Do not save Discriminator
+
   - Translate examples to jupyter
-  
-  - How to make your own architecture 
-  
+
+  - How to make your own architecture
+
     - _define_optimizers
     - default_optimizer
     - DualGAN
     - fit
     - calculate_losses
-  
-    
+
+
+
+
+
+
+
+
 

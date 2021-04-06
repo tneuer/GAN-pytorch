@@ -88,7 +88,7 @@ if __name__ == '__main__':
         x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/ConditionalGAN", optim=None,
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
     )
-    gan_model.summary(save=True)
+    gan_model.summary(save=False)
     gan_model.fit(
         X_train=X_train,
         y_train=y_train,
@@ -97,11 +97,11 @@ if __name__ == '__main__':
         batch_size=batch_size,
         epochs=epochs,
         steps={"Adversariat": 5},
-        log_every=200,
+        print_every=200,
         save_model_every="3e",
         save_images_every="0.5",
         save_losses_every=10,
-        enable_tensorboard=True,
+        enable_tensorboard=True
     )
     samples, losses = gan_model.get_training_results(by_epoch=False)
     gan_model.save()

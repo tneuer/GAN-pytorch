@@ -118,7 +118,7 @@ if __name__ == '__main__':
         batch_size=batch_size,
         epochs=epochs,
         steps={"Adversariat": 5},
-        log_every=200,
+        print_every=200,
         save_model_every="3e",
         save_images_every="0.5",
         save_losses_every=10,
