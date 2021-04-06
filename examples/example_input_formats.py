@@ -4,9 +4,9 @@ import numpy as np
 import vegans.utils.utils as utils
 
 from torch import nn
-from models.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
-from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
 from vegans.utils.utils import plot_images, plot_losses
+from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
+from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
 
 
 def call_gan_training(generator, adversariat):
