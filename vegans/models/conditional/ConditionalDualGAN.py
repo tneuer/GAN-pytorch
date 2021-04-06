@@ -3,10 +3,10 @@ import torch
 
 import numpy as np
 
-from utils.utils import get_input_dim
-from models.unconditional.DualGAN import DualGAN
-from utils.networks import Generator, Adversariat
-from models.conditional.ConditionalGenerativeModel import ConditionalGenerativeModel
+from vegans.utils.utils import get_input_dim
+from vegans.models.unconditional.DualGAN import DualGAN
+from vegans.utils.networks import Generator, Adversariat
+from vegans.models.conditional.ConditionalGenerativeModel import ConditionalGenerativeModel
 
 
 class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):

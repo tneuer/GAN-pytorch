@@ -1,8 +1,0 @@
-from models.unconditional.VanillaGAN import VanillaGAN
-from models.unconditional.WassersteinGAN import WassersteinGAN
-from models.unconditional.WassersteinGANGP import WassersteinGANGP
-
-
-from models.conditional.ConditionalVanillaGAN import ConditionalVanillaGAN
-from models.conditional.ConditionalWassersteinGAN import ConditionalWassersteinGAN
-from models.conditional.ConditionalWassersteinGANGP import ConditionalWassersteinGANGP

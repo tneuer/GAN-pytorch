@@ -3,8 +3,8 @@ import torch
 
 import numpy as np
 
-from utils.networks import Generator, Adversariat
-from models.unconditional.GenerativeModel import GenerativeModel
+from vegans.utils.networks import Generator, Adversariat
+from vegans.models.unconditional.GenerativeModel import GenerativeModel
 
 
 class DualGAN(GenerativeModel):

@@ -4,7 +4,7 @@ import json
 import torch
 
 import numpy as np
-import utils.utils as utils
+import vegans.utils.utils as utils
 import matplotlib.pyplot as plt
 import time
 
@@ -12,7 +12,7 @@ from datetime import datetime
 from torch.utils.data import DataLoader
 from torchvision.utils import make_grid
 from torch.utils.tensorboard import SummaryWriter
-from models.unconditional.GenerativeModel import GenerativeModel
+from vegans.models.unconditional.GenerativeModel import GenerativeModel
 
 
 class ConditionalGenerativeModel(GenerativeModel):

@@ -2,8 +2,8 @@ import torch
 
 import numpy as np
 
-from models.unconditional.DualGAN import DualGAN
-from utils.utils import wasserstein_loss
+from vegans.models.unconditional.DualGAN import DualGAN
+from vegans.utils.utils import wasserstein_loss
 
 
 class WassersteinGANGP(DualGAN):

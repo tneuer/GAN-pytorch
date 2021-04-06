@@ -1,11 +1,11 @@
 import torch
 
 import numpy as np
-import utils.utils as utils
+import vegans.utils.utils as utils
 
 from torch import nn
-from models.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
-from utils.layers import LayerReshape, LayerDebug, LayerPrintSize
+from vegans.models.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
+from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
 
 if __name__ == '__main__':
 

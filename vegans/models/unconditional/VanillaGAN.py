@@ -1,7 +1,7 @@
 import torch
 
 from torch.nn import BCELoss
-from models.unconditional.DualGAN import DualGAN
+from vegans.models.unconditional.DualGAN import DualGAN
 
 
 class VanillaGAN(DualGAN):

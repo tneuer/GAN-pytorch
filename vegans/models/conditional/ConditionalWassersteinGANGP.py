@@ -2,8 +2,8 @@ import torch
 
 import numpy as np
 
-from utils.utils import wasserstein_loss, concatenate
-from models.conditional.ConditionalDualGAN import ConditionalDualGAN
+from vegans.utils.utils import wasserstein_loss, concatenate
+from vegans.models.conditional.ConditionalDualGAN import ConditionalDualGAN
 
 
 class ConditionalWassersteinGANGP(ConditionalDualGAN):

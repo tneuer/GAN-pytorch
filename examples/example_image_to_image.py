@@ -4,9 +4,9 @@ import numpy as np
 import utils.utils as utils
 
 from torch import nn
-from utils.utils import plot_losses, plot_images, get_input_dim
-from utils.layers import LayerReshape, LayerDebug, LayerPrintSize
-from models.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP
+from vegans.utils.utils import plot_losses, plot_images, get_input_dim
+from vegans.utils.layers import LayerReshape, LayerDebug, LayerPrintSize
+from vegans.models.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP
 
 
 if __name__ == '__main__':

@@ -2,11 +2,11 @@ import torch
 
 import numpy as np
 
-from models.unconditional.DualGAN import DualGAN
-from utils.utils import wasserstein_loss
+from vegans.utils.utils import wasserstein_loss
+from vegans.models.conditional.ConditionalDualGAN import ConditionalDualGAN
 
 
-class WassersteinGAN(DualGAN):
+class ConditionalWassersteinGAN(ConditionalDualGAN):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -16,6 +16,7 @@ class WassersteinGAN(DualGAN):
             adversariat,
             x_dim,
             z_dim,
+            y_dim,
             optim=None,
             optim_kwargs=None,
             fixed_noise_size=32,
@@ -23,19 +24,16 @@ class WassersteinGAN(DualGAN):
             folder="./WassersteinGAN",
             ngpu=None):
 
-        DualGAN.__init__(
+        ConditionalDualGAN.__init__(
             self,
             generator=generator, adversariat=adversariat,
-            z_dim=z_dim, x_dim=x_dim, adv_type="Critic",
+            x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size,
             device=device,
             folder=folder,
             ngpu=ngpu
         )
-
-    def _default_optimizer(self):
-        return torch.optim.RMSprop
 
     def _default_optimizer(self):
         return torch.optim.RMSprop

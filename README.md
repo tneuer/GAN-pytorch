@@ -80,6 +80,7 @@ The fit function takes the following optional arguments:
 If you are researching new GAN training algorithms, you may find it useful to inherit from the `GenerativeModel` or  `ConditionalGenerativeModel` base class.
 
 ### Learn more:
+
 Currently the best way to learn more about how to use VeGANs is to have a look at the example [notebooks](https://github.com/unit8co/vegans/tree/master/notebooks).
 You can start with this [simple example](https://github.com/unit8co/vegans/blob/master/notebooks/00_univariate_gaussian.ipynb) showing how to sample from a univariate Gaussian using a GAN.
 Alternatively, can run example [scripts](https://github.com/unit8co/vegans/tree/master/examples).

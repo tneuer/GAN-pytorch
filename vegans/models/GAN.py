@@ -1,0 +1,7 @@
+from vegans.models.unconditional.VanillaGAN import VanillaGAN
+from vegans.models.unconditional.WassersteinGAN import WassersteinGAN
+from vegans.models.unconditional.WassersteinGANGP import WassersteinGANGP
+
+from vegans.models.conditional.ConditionalVanillaGAN import ConditionalVanillaGAN
+from vegans.models.conditional.ConditionalWassersteinGAN import ConditionalWassersteinGAN
+from vegans.models.conditional.ConditionalWassersteinGANGP import ConditionalWassersteinGANGP
