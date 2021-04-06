@@ -48,7 +48,14 @@ All current GAN implementations come with a conditional variant to allow for the
 - `ConditionalWassersteinGAN`
 - ...
 
+This can either be used to pass a one hot encoded vector to predict a specific label (generate a certain number in case of mnist: [example_conditional.py](https://github.com/unit8co/vegans/tree/master/examples) ) or it can also be a full image (when for example trying to rotate an image: [example_image_to_image.py](https://github.com/unit8co/vegans/tree/master/examples) ).
+
+Models can either be passed as `torch.nn.Sequential` objects or by defining custom architectures, see [example_input_formats.py](https://github.com/unit8co/vegans/tree/master/examples) 
+
+
+
 ### Slightly More Details:
+
 All of the GAN objects inherit from a `GenerativeModel` base class. When building any such GAN, you must give in argument a generator and discriminator networks (some `torch.nn.Module`), as well as a the dimensions of the latent space `z_dim` and input dimension of the images `x_dim`. In addition, you can specify some parameters supported by all GAN implementations:
 * `optim`: The optimizer to use for all networks during training. If `None` a default optimizer (probably either `torch.optim.Adam` or `torch.optim.RMSprop`) is chosen by the specific model. A `dict` type with appropriate keys can be passed to specify different optimizers for different networks.
 * `optim_kwargs`:  The optimizer default arguments. A `dict` type with appropriate keys can be passed to specify different optimizer keyword arguments for different networks.
