@@ -9,13 +9,14 @@ import matplotlib.pyplot as plt
 import time
 
 from datetime import datetime
+from abc import ABC, abstractmethod
 from torch.utils.data import DataLoader
 from torchvision.utils import make_grid
-from torch.utils.tensorboard import SummaryWriter
 from vegans.utils.utils import plot_losses
+from torch.utils.tensorboard import SummaryWriter
 
 
-class GenerativeModel():
+class GenerativeModel(ABC):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -79,50 +80,32 @@ class GenerativeModel():
 
         self.images_produced = True if len(self.adversariat.input_size) > 1 else False
         self.fixed_noise = self.sample(n=fixed_noise_size)
+        self._check_attributes()
         self.hyperparameters = {
             "x_dim": x_dim, "z_dim": z_dim, "ngpu": ngpu, "folder": folder, "optimizers": self.optimizers,
-            "device": self.device, "generator_loss": self.generator_loss_fn, "adversariat_loss": self.adversariat_loss_fn
+            "device": self.device, "loss_functions": self.loss_functions
         }
-        self._check_attributes()
-
-    def _check_attributes(self):
-        assert hasattr(self, "generator"), "Model must have attribute 'generator'."
-        assert hasattr(self, "adversariat"), "Model must have attribute 'adversariat'."
-        assert hasattr(self, "neural_nets"), "Model must have attribute 'neural_nets'."
-        assert hasattr(self, "device"), "Model must have attribute 'device'."
-        assert hasattr(self, "optimizers"), "Model must have attribute 'optimizers'."
-        assert hasattr(self, "generator_loss_fn"), "DualGAN needs attribute 'generator_loss_fn'."
-        assert hasattr(self, "adversariat_loss_fn"), "DualGAN needs attribute 'adversariat_loss_fn'."
-        assert isinstance(self.ngpu, int) and self.ngpu >= 0, "ngpu must be positive integer. Given: {}.".format(ngpu)
-        for name, _ in self.neural_nets.items():
-            assert name in self.optimizers, "{} does not have a corresponding optimizer but is needed.".format(name)
-        assert len(self.z_dim) == 1 or len(self.z_dim) == 3, (
-            "z_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(z_dim)
-        )
-        assert len(self.x_dim) == 1 or len(self.x_dim) == 3, (
-            "x_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(x_dim)
-        )
 
     def _define_optimizers(self, optim, optim_kwargs):
         self._opt_kwargs = {}
         for name, _ in self.neural_nets.items():
             self._opt_kwargs[name] = {}
         if isinstance(optim_kwargs, dict):
-            self._check_dict_keys(optim_kwargs, where="_define_optimizers")
             for name, opt_kwargs in optim_kwargs.items():
                 self._opt_kwargs[name] = opt_kwargs
+            self._check_dict_keys(self._opt_kwargs, where="_define_optimizer_kwargs")
 
         self._opt = {}
         if optim is None:
             for name, _ in self.neural_nets.items():
                 self._opt[name] = self._default_optimizer()
         elif isinstance(optim, dict):
-            self._check_dict_keys(optim, where="_define_optimizers")
             for name, opt in optim.items():
                 self._opt[name] = opt
             for name, _ in self.neural_nets.items():
                 if name not in self._opt:
                     self._opt[name] = self._default_optimizer()
+            self._check_dict_keys(param_dict=self._opt, where="_define_optimizers")
         else:
             for name, _ in self.neural_nets.items():
                 self._opt[name] = optim
@@ -135,13 +118,37 @@ class GenerativeModel():
         for name, _ in param_dict.items():
             if name not in self.neural_nets:
                 available_nets = [name for name, _ in self.neural_nets.items()]
-                raise ValueError("Error in {}: {} not in neural_nets. Must be one of: {}.".format(
+                raise KeyError("Error in {}: {} not in self.neural_nets. Must be one of: {}.".format(
                     where, name, available_nets)
                 )
+        for name, _ in self.neural_nets.items():
+            if name not in param_dict:
+                raise KeyError("Error in {}: self.{} not in param_dict.".format(
+                    where, name)
+                )
 
+    def _check_attributes(self):
+        assert hasattr(self, "neural_nets"), "Model must have attribute 'neural_nets'."
+        assert hasattr(self, "device"), "Model must have attribute 'device'."
+        assert hasattr(self, "optimizers"), "Model must have attribute 'optimizers'."
+        assert isinstance(self.ngpu, int) and self.ngpu >= 0, "ngpu must be positive integer. Given: {}.".format(ngpu)
+        for name, _ in self.neural_nets.items():
+            assert name in self.optimizers, "{} does not have a corresponding optimizer but is needed.".format(name)
+        assert len(self.z_dim) == 1 or len(self.z_dim) == 3, (
+            "z_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(z_dim)
+        )
+        assert len(self.x_dim) == 1 or len(self.x_dim) == 3, (
+            "x_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(x_dim)
+        )
+        assert isinstance(self.neural_nets, dict), "'neural_nets' attribute of GenerativeModel must be dictionary."
 
+    @abstractmethod
+    def _default_optimizer(self):
+        pass
+
+    @abstractmethod
     def _define_loss(self):
-        raise NotImplementedError("'_define_loss' must be implemented for objects of type 'GenerativeModel'.")
+        pass
 
     def _set_up_training(self, X_train, y_train, X_test, y_test, epochs, batch_size, steps,
         print_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard):
@@ -184,18 +191,20 @@ class GenerativeModel():
         assert X_train.shape[2:] == self.adversariat.input_size[1:], (
             "Wrong input shape for adversariat. Given: {}. Needed: {}.".format(X_train.shape, self.adversariat.input_size)
         )
-        assert X_train.shape[0] == y_train.shape[0], (
-            "Same number if X_train and y_train needed.Given: {} and {}.".format(X_train.shape[0], y_train.shape[0])
-        )
+
         if X_test is not None:
             assert X_train.shape[1:] == X_test.shape[1:], (
                 "X_train and X_test must have same dimensions. Given: {} and {}.".format(X_train.shape[1:], X_test.shape[1:])
             )
-            assert X_test.shape[0] == y_test.shape[0], (
-                "Same number if X_test and y_test needed.Given: {} and {}.".format(X_test.shape[0], y_test.shape[0])
-            )
+            if y_test is not None:
+                assert X_test.shape[0] == y_test.shape[0], (
+                    "Same number if X_test and y_test needed.Given: {} and {}.".format(X_test.shape[0], y_test.shape[0])
+                )
 
         if y_train is not None:
+            assert X_train.shape[0] == y_train.shape[0], (
+                "Same number if X_train and y_train needed.Given: {} and {}.".format(X_train.shape[0], y_train.shape[0])
+            )
             assert len(y_train.shape) == 2 or len(y_train.shape) == 4, (
                 "y_train must be either have 2 or 4 shape dimensions. Given: {}.".format(y_train.shape) +
                 "Try to use y_train.reshape(-1, 1) or y_train.reshape(-1, 1, height, width)."
@@ -210,17 +219,16 @@ class GenerativeModel():
 
 
     def _create_steps(self, steps):
-        if steps is None:
-            self.steps = {}
-            for name, _ in self.neural_nets.items():
-                self.steps[name] = 1
-        else:
+        self.steps = {}
+        for name, _ in self.neural_nets.items():
+            self.steps[name] = 1
+        if steps is not None:
             assert isinstance(steps, dict), "steps parameter must be of type dict. Given: {}.".format(type(steps))
-            self._check_dict_keys(steps, where="_create_steps")
             self.steps = steps
             for name, _ in self.neural_nets.items():
                 if name not in self.steps:
                     self.steps[name] = 1
+            self._check_dict_keys(self.steps, where="_create_steps")
 
     def _set_up_saver(self, print_every, save_model_every, save_images_every, save_losses_every, nr_batches):
         if isinstance(print_every, str):
@@ -334,11 +342,14 @@ class GenerativeModel():
 
         self._clean_up(writers=[writer_train, writer_test])
 
-    def _train(self, X_batch, Z_batch, who=None):
-        raise NotImplementedError("'_train' must be implemented by subclass.")
 
+    @abstractmethod
+    def _train(self, X_batch, Z_batch, who=None):
+        pass
+
+    @abstractmethod
     def calculate_losses(self, X_batch, Z_batch, who=None):
-        raise NotImplementedError("'calculate_losses' must be implemented by subclass.")
+        pass
 
     def _zero_grad(self, who=None):
         if who is not None:

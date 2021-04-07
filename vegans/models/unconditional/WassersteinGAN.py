@@ -2,11 +2,11 @@ import torch
 
 import numpy as np
 
-from vegans.models.unconditional.DualGAN import DualGAN
+from vegans.models.unconditional.GAN1v1 import GAN1v1
 from vegans.utils.utils import wasserstein_loss
 
 
-class WassersteinGAN(DualGAN):
+class WassersteinGAN(GAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -24,7 +24,7 @@ class WassersteinGAN(DualGAN):
             folder="./WassersteinGAN",
             ngpu=None):
 
-        DualGAN.__init__(
+        GAN1v1.__init__(
             self,
             generator=generator, adversariat=adversariat,
             z_dim=z_dim, x_dim=x_dim, adv_type="Critic",
@@ -44,8 +44,7 @@ class WassersteinGAN(DualGAN):
         return torch.optim.RMSprop
 
     def _define_loss(self):
-        self.generator_loss_fn = wasserstein_loss
-        self.adversariat_loss_fn = wasserstein_loss
+        self.loss_functions = {"Generator": wasserstein_loss, "Adversariat": wasserstein_loss}
 
 
     #########################################################################

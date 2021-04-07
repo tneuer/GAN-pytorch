@@ -3,10 +3,10 @@ import torch
 import numpy as np
 
 from vegans.utils.utils import wasserstein_loss
-from vegans.models.conditional.ConditionalDualGAN import ConditionalDualGAN
+from vegans.models.conditional.ConditionalGAN1v1 import ConditionalGAN1v1
 
 
-class ConditionalWassersteinGAN(ConditionalDualGAN):
+class ConditionalWassersteinGAN(ConditionalGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -25,7 +25,7 @@ class ConditionalWassersteinGAN(ConditionalDualGAN):
             folder="./WassersteinGAN",
             ngpu=None):
 
-        ConditionalDualGAN.__init__(
+        ConditionalGAN1v1.__init__(
             self,
             generator=generator, adversariat=adversariat,
             x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Critic",
@@ -42,8 +42,7 @@ class ConditionalWassersteinGAN(ConditionalDualGAN):
         return torch.optim.RMSprop
 
     def _define_loss(self):
-        self.generator_loss_fn = wasserstein_loss
-        self.adversariat_loss_fn = wasserstein_loss
+        self.loss_functions = {"Generator": wasserstein_loss, "Adversariat": wasserstein_loss}
 
 
     #########################################################################

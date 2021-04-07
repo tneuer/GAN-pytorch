@@ -7,7 +7,7 @@ from vegans.utils.networks import Generator, Adversariat
 from vegans.models.unconditional.GenerativeModel import GenerativeModel
 
 
-class DualGAN(GenerativeModel):
+class GAN1v1(GenerativeModel):
     """ Special half abstract class for GAN with structure of one generator and
     one discriminator / critic. Examples are the original `VanillaGAN`, `WassersteinGAN`
     and `WassersteinGANGP`.
@@ -27,7 +27,7 @@ class DualGAN(GenerativeModel):
             optim_kwargs=None,
             fixed_noise_size=32,
             device=None,
-            folder="./DualGAN",
+            folder="./GAN1v1",
             ngpu=0):
 
         if device is None:
@@ -40,6 +40,8 @@ class DualGAN(GenerativeModel):
             self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
+        assert hasattr(self, "generator"), "Model must have attribute 'generator'."
+        assert hasattr(self, "adversariat"), "Model must have attribute 'adversariat'."
 
 
     #########################################################################
@@ -83,7 +85,7 @@ class DualGAN(GenerativeModel):
     def _calculate_generator_loss(self, Z_batch):
         fake_images = self.generate(z=Z_batch)
         fake_predictions = self.predict(x=fake_images)
-        gen_loss = self.generator_loss_fn(
+        gen_loss = self.loss_functions["Generator"](
             fake_predictions, torch.ones_like(fake_predictions, requires_grad=False)
         )
         self._losses.update({"Generator": gen_loss})
@@ -93,10 +95,10 @@ class DualGAN(GenerativeModel):
         fake_predictions = self.predict(x=fake_images)
         real_predictions = self.predict(x=X_batch.float())
 
-        adv_loss_fake = self.adversariat_loss_fn(
+        adv_loss_fake = self.loss_functions["Adversariat"](
             fake_predictions, torch.zeros_like(fake_predictions, requires_grad=False)
         )
-        adv_loss_real = self.adversariat_loss_fn(
+        adv_loss_real = self.loss_functions["Adversariat"](
             real_predictions, torch.ones_like(real_predictions, requires_grad=False)
         )
         adv_loss = 0.5*(adv_loss_fake + adv_loss_real)

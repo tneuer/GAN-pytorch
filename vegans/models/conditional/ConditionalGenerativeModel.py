@@ -277,5 +277,5 @@ class ConditionalGenerativeModel(GenerativeModel):
         if z is None:
             z = self.sample(n=len(y))
 
-        inpt = utils.concatenate(z.to(self.device), y.to(self.device)).float()
+        inpt = utils.concatenate(z, y).float()
         return self.generator(inpt)

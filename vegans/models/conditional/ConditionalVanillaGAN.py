@@ -1,10 +1,10 @@
 import torch
 
 from torch.nn import BCELoss
-from vegans.models.conditional.ConditionalDualGAN import ConditionalDualGAN
+from vegans.models.conditional.ConditionalGAN1v1 import ConditionalGAN1v1
 
 
-class ConditionalVanillaGAN(ConditionalDualGAN):
+class ConditionalVanillaGAN(ConditionalGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -22,7 +22,7 @@ class ConditionalVanillaGAN(ConditionalDualGAN):
             folder="./ConditionalVanillaGAN",
             ngpu=None):
 
-        ConditionalDualGAN.__init__(
+        ConditionalGAN1v1.__init__(
             self,
             generator=generator, adversariat=adversariat,
             x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Discriminator",
@@ -35,5 +35,4 @@ class ConditionalVanillaGAN(ConditionalDualGAN):
         return torch.optim.Adam
 
     def _define_loss(self):
-        self.generator_loss_fn = BCELoss()
-        self.adversariat_loss_fn = BCELoss()
+        self.loss_functions = {"Generator": BCELoss(), "Adversariat": BCELoss()}

@@ -3,10 +3,10 @@ import torch
 import numpy as np
 
 from vegans.utils.utils import wasserstein_loss, concatenate
-from vegans.models.conditional.ConditionalDualGAN import ConditionalDualGAN
+from vegans.models.conditional.ConditionalGAN1v1 import ConditionalGAN1v1
 
 
-class ConditionalWassersteinGANGP(ConditionalDualGAN):
+class ConditionalWassersteinGANGP(ConditionalGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -25,7 +25,7 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
             folder="./WassersteinGANGP",
             ngpu=None):
 
-        ConditionalDualGAN.__init__(
+        ConditionalGAN1v1.__init__(
             self,
             generator=generator, adversariat=adversariat,
             x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Critic",
@@ -42,11 +42,9 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
         return torch.optim.RMSprop
 
     def _define_loss(self):
-        self.generator_loss_fn = wasserstein_loss
-        self.adversariat_loss_fn = wasserstein_loss
-        self.gradient_penalty_fn = self.gradient_penalty
+        self.loss_functions = {"Generator": wasserstein_loss, "Adversariat": wasserstein_loss, "GP": self._gradient_penalty}
 
-    def gradient_penalty(self, real_images, fake_images):
+    def _gradient_penalty(self, real_images, fake_images):
         alpha = torch.Tensor(np.random.random((real_images.size(0), 1, 1, 1))).to(self.device)
         interpolates = (alpha * real_images + ((1 - alpha) * fake_images)).requires_grad_(True).float()
         d_interpolates = self.adversariat(interpolates).to(self.device)
@@ -72,13 +70,13 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
         fake_predictions = self.predict(x=fake_images, y=y_batch)
         real_predictions = self.predict(x=X_batch, y=y_batch)
 
-        adv_loss_fake = self.adversariat_loss_fn(
+        adv_loss_fake = self.loss_functions["Adversariat"](
             fake_predictions, torch.zeros_like(fake_predictions, requires_grad=False)
         )
-        adv_loss_real = self.adversariat_loss_fn(
+        adv_loss_real = self.loss_functions["Adversariat"](
             real_predictions, torch.ones_like(real_predictions, requires_grad=False)
         )
-        adv_loss_grad = self.gradient_penalty_fn(
+        adv_loss_grad = self.loss_functions["GP"](
             concatenate(X_batch, y_batch),
             concatenate(fake_images, y_batch)
         )

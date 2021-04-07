@@ -4,12 +4,12 @@ import torch
 import numpy as np
 
 from vegans.utils.utils import get_input_dim
-from vegans.models.unconditional.DualGAN import DualGAN
+from vegans.models.unconditional.GAN1v1 import GAN1v1
 from vegans.utils.networks import Generator, Adversariat
 from vegans.models.conditional.ConditionalGenerativeModel import ConditionalGenerativeModel
 
 
-class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
+class ConditionalGAN1v1(ConditionalGenerativeModel, GAN1v1):
     """ Special half abstract class for conditional GAN with structure of one generator and
     one discriminator / critic. Examples are the original `ConditionalVanillaGAN`,
     `ConditionalWassersteinGAN` and `ConditionalWassersteinGANGP`.
@@ -30,12 +30,12 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
             optim_kwargs=None,
             fixed_noise_size=32,
             device=None,
-            folder="./DualGAN",
+            folder="./GAN1v1",
             ngpu=0):
 
         adv_in_dim = get_input_dim(dim1=x_dim, dim2=y_dim)
         gen_in_dim = get_input_dim(dim1=z_dim, dim2=y_dim)
-        DualGAN.__init__(
+        GAN1v1.__init__(
             self, generator=generator, adversariat=adversariat, x_dim=adv_in_dim, z_dim=gen_in_dim,
             adv_type=adv_type, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=0
@@ -87,7 +87,7 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
     def _calculate_generator_loss(self, Z_batch, y_batch):
         fake_images = self.generate(y=y_batch, z=Z_batch)
         fake_predictions = self.predict(x=fake_images, y=y_batch)
-        gen_loss = self.generator_loss_fn(
+        gen_loss = self.loss_functions["Generator"](
             fake_predictions, torch.ones_like(fake_predictions, requires_grad=False)
         )
         self._losses.update({"Generator": gen_loss})
@@ -97,10 +97,10 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
         fake_predictions = self.predict(x=fake_images, y=y_batch)
         real_predictions = self.predict(x=X_batch, y=y_batch)
 
-        adv_loss_fake = self.adversariat_loss_fn(
+        adv_loss_fake = self.loss_functions["Adversariat"](
             fake_predictions, torch.zeros_like(fake_predictions, requires_grad=False)
         )
-        adv_loss_real = self.adversariat_loss_fn(
+        adv_loss_real = self.loss_functions["Adversariat"](
             real_predictions, torch.ones_like(real_predictions, requires_grad=False)
         )
         adv_loss = 0.5*(adv_loss_fake + adv_loss_real)
