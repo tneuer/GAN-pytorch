@@ -1,4 +1,4 @@
-# VeGANs
+# VeGANs (might be merged with the current pip package vegan in the near future)
 
 A library to easily train various existing GANs (Generative Adversarial Networks) in PyTorch.
 
@@ -9,7 +9,7 @@ The focus is on simplicity and providing reasonable defaults.
 
 ## How to install
 You need python 3.5 or above. Then:
-`pip install vegans`
+~~`pip install vegans`~~ (Not yet)
 
 ## How to use
 The basic idea is that the user provides discriminator and generator networks, and the library takes care of training them in a selected GAN setting:
