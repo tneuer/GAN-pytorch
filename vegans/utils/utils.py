@@ -121,7 +121,11 @@ def plot_losses(losses, show=True, share=False):
     return fig, ax
 
 
-def plot_images(images, labels=None, show=True, n=9):
+def plot_images(images, labels=None, show=True, n=None):
+    if n is None:
+        n = images.shape[0]
+    if n > 36:
+        n = 36
     nrows = int(np.sqrt(n))
     ncols = n // nrows
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 6))
