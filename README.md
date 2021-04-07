@@ -102,6 +102,7 @@ Some of the code has been inspired by some existing GAN implementations:
   - BEGAN
   - EBGAN
   - LR-GAN
+  - VAEGAN
   - BicycleGAN
   - VAEGAN
   - CycleGAN
@@ -117,19 +118,14 @@ Some of the code has been inspired by some existing GAN implementations:
 - Other
 
   - Feature loss
-- Notebook conditional GAN
-  - Notebook Im2Im GAN
-- ~~Check input shapes~~
+
+  - Notebook creating own GAN
+
   - Improve Doc
-- Do not save Discriminator
-  - ~~Translate examples to jupyter~~
-- How to make your own architecture (Abstract base class)
-  
-  - _define_optimizers
-    - default_optimizer
-    - DualGAN
-    - fit
-    - calculate_losses
+
+  - Do not save Discriminator
+    
+    
 
 
 

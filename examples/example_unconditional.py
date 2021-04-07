@@ -21,7 +21,7 @@ if __name__ == '__main__':
     im_dim = X_train.shape[1:]
 
 
-    #########################################################################
+    ######################################C###################################
     # Architecture
     #########################################################################
     z_dim = 128
@@ -62,7 +62,7 @@ if __name__ == '__main__':
                 nn.LeakyReLU(0.2),
                 nn.Linear(256, 1)
             )
-            self.output = nn.Linear(1, 1)
+            self.output = nn.Identity()
 
         def forward(self, x):
             x = self.hidden_part(x)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     generator = MyGenerator(z_dim=z_dim)
     adversariat = MyAdversariat(x_dim=im_dim)
-    gan_model = WassersteinGAN(
+    gan_model = WassersteinGANGP(
         generator=generator, adversariat=adversariat,
         z_dim=z_dim, x_dim=im_dim, folder="TrainedModels/GAN", optim={"Generator": torch.optim.Adam},
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}
