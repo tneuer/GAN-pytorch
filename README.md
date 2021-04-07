@@ -48,9 +48,11 @@ All current GAN implementations come with a conditional variant to allow for the
 - `ConditionalWassersteinGAN`
 - ...
 
-This can either be used to pass a one hot encoded vector to predict a specific label (generate a certain number in case of mnist: [example_conditional.py](https://github.com/unit8co/vegans/tree/master/examples) ) or it can also be a full image (when for example trying to rotate an image: [example_image_to_image.py](https://github.com/unit8co/vegans/tree/master/examples) ).
+This can either be used to pass a one hot encoded vector to predict a specific label (generate a certain number in case of mnist: [example_conditional.py](https://github.com/tneuer/GAN-pytorch/blob/main/examples/example_conditional.py) ) or it can also be a full image (when for example trying to rotate an image: [example_image_to_image.py](https://github.com/tneuer/GAN-pytorch/blob/main/examples/example_image_to_image.py) ).
 
-Models can either be passed as `torch.nn.Sequential` objects or by defining custom architectures, see [example_input_formats.py](https://github.com/unit8co/vegans/tree/master/examples)
+Models can either be passed as `torch.nn.Sequential` objects or by defining custom architectures, see [example_input_formats.py](https://github.com/tneuer/GAN-pytorch/blob/main/examples/example_input_formats.py)
+
+Also look at the [jupyter notebooks](https://github.com/tneuer/GAN-pytorch/tree/main/notebooks) for better visualized examples.
 
 
 
