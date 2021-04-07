@@ -35,6 +35,7 @@ class WassersteinGAN(DualGAN):
             ngpu=ngpu
         )
         self._clip_val = clip_val
+        self.hyperparameters["clip_val"] = clip_val
 
     def _default_optimizer(self):
         return torch.optim.RMSprop

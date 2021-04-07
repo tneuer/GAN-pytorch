@@ -12,9 +12,9 @@ def call_gan_training(generator, adversariat):
     gan_model = VanillaGAN(
         generator=generator, adversariat=adversariat,
         z_dim=z_dim, x_dim=im_dim, folder="TrainedModels/GAN", optim=torch.optim.RMSprop,
-        generator_kwargs={"lr": lr_gen}, adversariat_kwargs={"lr": lr_adv}
+        optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}
     )
-    gan_model.summary(save=True)
+    # gan_model.summary(save=True)
     gan_model.fit(
         X_train=X_train,
         X_test=X_test,
@@ -75,6 +75,7 @@ if __name__ == '__main__':
         nn.Linear(in_features=16, out_features=1),
         nn.Sigmoid()
     )
+    z_dim = [1, 8, 8]
     call_gan_training(generator, adversariat)
 
 

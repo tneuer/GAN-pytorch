@@ -35,6 +35,7 @@ class WassersteinGANGP(DualGAN):
             ngpu=ngpu
         )
         self.lmbda_grad = lmbda_grad
+        self.hyperparameters["lmbda_grad"] = lmbda_grad
 
     def _define_loss(self):
         self.generator_loss_fn = wasserstein_loss

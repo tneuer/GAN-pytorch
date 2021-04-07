@@ -24,9 +24,9 @@ if __name__ == '__main__':
     one_hot_encoder = OneHotEncoder(sparse=False)
     y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))
     y_test = one_hot_encoder.transform(y_test.reshape(-1, 1))
-    im_dim = X_train.shape[1:]
-    label_dim = y_train.shape[1]
 
+    im_dim = X_train.shape[1:]
+    label_dim = y_train.shape[1:]
     #########################################################################
     # Flat network
     #########################################################################
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/ConditionalGAN", optim=None,
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
     )
-    gan_model.summary(save=False)
+    gan_model.summary(save=True)
     gan_model.fit(
         X_train=X_train,
         y_train=y_train,

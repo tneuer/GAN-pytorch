@@ -10,6 +10,11 @@ from vegans.models.conditional.ConditionalGenerativeModel import ConditionalGene
 
 
 class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
+    """ Special half abstract class for conditional GAN with structure of one generator and
+    one discriminator / critic. Examples are the original `ConditionalVanillaGAN`,
+    `ConditionalWassersteinGAN` and `ConditionalWassersteinGANGP`.
+    """
+
     #########################################################################
     # Actions before training
     #########################################################################
@@ -36,8 +41,8 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=0
         )
         ConditionalGenerativeModel.__init__(
-            self, x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, folder=None, ngpu=ngpu,
-            fixed_noise_size=fixed_noise_size, device=device
+            self, x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, optim=optim, optim_kwargs=optim_kwargs,
+            fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
 
 
@@ -77,6 +82,7 @@ class ConditionalDualGAN(ConditionalGenerativeModel, DualGAN):
         else:
             self._calculate_generator_loss(Z_batch=Z_batch, y_batch=y_batch)
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch, y_batch=y_batch)
+            self._losses["Loss/LossRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
 
     def _calculate_generator_loss(self, Z_batch, y_batch):
         fake_images = self.generate(y=y_batch, z=Z_batch)

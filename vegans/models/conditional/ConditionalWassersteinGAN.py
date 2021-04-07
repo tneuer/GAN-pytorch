@@ -36,6 +36,7 @@ class ConditionalWassersteinGAN(ConditionalDualGAN):
             ngpu=ngpu
         )
         self._clip_val = clip_val
+        self.hyperparameters["clip_val"] = clip_val
 
     def _default_optimizer(self):
         return torch.optim.RMSprop
@@ -53,6 +54,6 @@ class ConditionalWassersteinGAN(ConditionalDualGAN):
             self.optimizers[who].step()
             if who == "Adversariat":
                 for p in self.adversariat.parameters():
-                    p.data.clamp_(-self.clip_val, self.clip_val)
+                    p.data.clamp_(-self._clip_val, self._clip_val)
         else:
             [optimizer.step() for _, optimizer in self.optimizers.items()]

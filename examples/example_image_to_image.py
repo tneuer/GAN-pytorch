@@ -1,7 +1,7 @@
 import torch
 
 import numpy as np
-import utils.utils as utils
+import vegans.utils.utils as utils
 
 from torch import nn
 from vegans.utils.layers import LayerReshape, LayerPrintSize

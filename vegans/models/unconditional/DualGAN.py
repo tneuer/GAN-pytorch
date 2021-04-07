@@ -8,6 +8,11 @@ from vegans.models.unconditional.GenerativeModel import GenerativeModel
 
 
 class DualGAN(GenerativeModel):
+    """ Special half abstract class for GAN with structure of one generator and
+    one discriminator / critic. Examples are the original `VanillaGAN`, `WassersteinGAN`
+    and `WassersteinGANGP`.
+    """
+
     #########################################################################
     # Actions before training
     #########################################################################
@@ -29,14 +34,11 @@ class DualGAN(GenerativeModel):
             device = "cuda" if torch.cuda.is_available() else "cpu"
         self.generator = Generator(generator, input_size=z_dim, device=device, ngpu=ngpu)
         self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, device=device, ngpu=ngpu)
-
         self.neural_nets = {"Generator": self.generator, "Adversariat": self.adversariat}
-        self._define_optimizers(
-            optim=optim, optim_kwargs=optim_kwargs,
-        )
+
         GenerativeModel.__init__(
-            self, x_dim=x_dim, z_dim=z_dim, folder=folder, ngpu=ngpu,
-            fixed_noise_size=fixed_noise_size, device=device
+            self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
+            fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
 
 
@@ -76,6 +78,7 @@ class DualGAN(GenerativeModel):
         else:
             self._calculate_generator_loss(Z_batch=Z_batch)
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch)
+            self._losses["Loss/LossRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
 
     def _calculate_generator_loss(self, Z_batch):
         fake_images = self.generate(z=Z_batch)

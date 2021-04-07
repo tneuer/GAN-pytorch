@@ -71,14 +71,17 @@ def concatenate(tensor1, tensor2):
     return torch.cat((tensor1, tensor2), axis=1)
 
 def get_input_dim(dim1, dim2):
-    if isinstance(dim1, int) & isinstance(dim2, int):
-        gen_in_dim = dim1 + dim2
-    elif isinstance(dim1, (list, tuple, np.ndarray)) & isinstance(dim2, int):
-        gen_in_dim = [dim1[0]+dim2, *dim1[1:]]
-    elif isinstance(dim1, int) & isinstance(dim2, (list, tuple, np.ndarray)):
-        gen_in_dim = [dim2[0]+dim1, *dim2[1:]]
+
+    dim1 = [dim1] if isinstance(dim1, int) else dim1
+    dim2 = [dim2] if isinstance(dim1, int) else dim2
+    if len(dim1)==1 and len(dim2)==1:
+        gen_in_dim = dim1[0] + dim2[0]
+    elif len(dim1)==3 and len(dim2)==1:
+        gen_in_dim = [dim1[0]+dim2[0], *dim1[1:]]
+    elif len(dim1)==1 and len(dim2)==3:
+        gen_in_dim = [dim2[0]+dim1[0], *dim2[1:]]
     else:
-        assert (dim1[1] == dim2[1]) & (dim1[2] == dim2[2]), (
+        assert (dim1[1] == dim2[1]) and (dim1[2] == dim2[2]), (
             "If both dim1 and dim2 are arrays, must have same shape. dim1: {}. dim2: {}.".format(dim1, dim2)
         )
         gen_in_dim = [dim1[0]+dim2[0], *dim1[1:]]

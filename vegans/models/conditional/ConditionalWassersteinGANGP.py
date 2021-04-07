@@ -36,6 +36,7 @@ class ConditionalWassersteinGANGP(ConditionalDualGAN):
             ngpu=ngpu
         )
         self.lmbda_grad = lmbda_grad
+        self.hyperparameters["lmbda_grad"] = lmbda_grad
 
     def _default_optimizer(self):
         return torch.optim.RMSprop

@@ -30,7 +30,7 @@ class NeuralNetwork(Module):
         self.network = network.to(self.device)
         self._validate_input()
 
-        if self.ngpu is not None and self.ngpu > 1:
+        if self.device=="cuda" and self.ngpu is not None:
             if self.ngpu > 1:
                 self.network = torch.nn.DataParallel(self.network)
 
