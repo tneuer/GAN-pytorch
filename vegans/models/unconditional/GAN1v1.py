@@ -49,15 +49,15 @@ class GAN1v1(GenerativeModel):
     #########################################################################
     def calculate_losses(self, X_batch, Z_batch, who=None):
         if who == "Generator":
-            self._calculate_generator_loss(Z_batch=Z_batch)
+            self._calculate_generator_loss(X_batch=X_batch, Z_batch=Z_batch)
         elif who == "Adversariat":
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch)
         else:
-            self._calculate_generator_loss(Z_batch=Z_batch)
+            self._calculate_generator_loss(X_batch=X_batch, Z_batch=Z_batch)
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch)
             self._losses["RealFakeRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
 
-    def _calculate_generator_loss(self, Z_batch):
+    def _calculate_generator_loss(self, X_batch, Z_batch):
         fake_images = self.generate(z=Z_batch)
         fake_predictions = self.predict(x=fake_images)
         gen_loss = self.loss_functions["Generator"](

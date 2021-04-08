@@ -122,3 +122,8 @@ class Adversariat(NeuralNetwork):
 
     def predict(self, x):
         return self(x)
+
+
+class Encoder(NeuralNetwork):
+    def __init__(self, network, input_size, device, ngpu):
+        super().__init__(network, input_size=input_size, name="Encoder", device=device, ngpu=ngpu)

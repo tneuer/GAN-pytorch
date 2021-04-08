@@ -108,22 +108,27 @@ Some of the code has been inspired by some existing GAN implementations:
   - CycleGAN
   - InfoGAN
   - Least Squares GAN
-  - Pix2Pix
+  - ~~Pix2Pix~~
   - WassersteinGAN SpectralNorm
   - DiscoGAN
   - Adversarial Autoencoder
 - Layers
   - Inception
   - Residual Block
+  - Minibatch discrimination
 - Other
 
   - Feature loss
 
-  - Notebook creating own GAN
-
-  - Improve Doc
+  - Improve Doc for networks
 
   - Do not save Discriminator
+  
+  - Include sources in jupyter
+    
+  - Include images in jupyter
+    
+  - Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/
     
     
 

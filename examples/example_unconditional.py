@@ -5,7 +5,7 @@ import vegans.utils.utils as utils
 
 from torch import nn
 from vegans.utils.layers import LayerReshape, LayerPrintSize
-from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP
+from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP, LSGAN
 
 if __name__ == '__main__':
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
                 nn.LeakyReLU(0.2),
                 nn.Linear(256, 1)
             )
-            self.output = nn.Identity()
+            self.output = nn.Sigmoid()
 
         def forward(self, x):
             x = self.hidden_part(x)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     generator = MyGenerator(z_dim=z_dim)
     adversariat = MyAdversariat(x_dim=im_dim)
-    gan_model = WassersteinGAN(
+    gan_model = LSGAN(
         generator=generator, adversariat=adversariat,
         z_dim=z_dim, x_dim=im_dim, folder="TrainedModels/GAN", optim={"Generator": torch.optim.Adam},
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}

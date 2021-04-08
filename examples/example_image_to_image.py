@@ -5,7 +5,7 @@ import vegans.utils.utils as utils
 
 from torch import nn
 from vegans.utils.layers import LayerReshape, LayerPrintSize
-from vegans.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP
+from vegans.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP, ConditionalPix2Pix
 
 
 if __name__ == '__main__':
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                 nn.BatchNorm2d(num_features=20),
                 nn.Conv2d(in_channels=20, out_channels=1, kernel_size=3, stride=1, padding=1),
             )
-            self.output = nn.Identity()
+            self.output = nn.Sigmoid()
 
         def forward(self, x):
             x = self.hidden_part(x)
@@ -104,10 +104,13 @@ if __name__ == '__main__':
 
     generator = MyGenerator(z_dim=z_dim)
     adversariat = MyAdversariat(x_dim=im_dim)
-    gan_model = ConditionalWassersteinGAN(
+
+    optim_kwargs = {"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}
+
+    gan_model = ConditionalPix2Pix(
         generator=generator, adversariat=adversariat,
         x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/Im2Im", optim=torch.optim.RMSprop,
-        generator_kwargs={"lr": lr_gen}, adversariat_kwargs={"lr": lr_adv}, fixed_noise_size=16
+        optim_kwargs=optim_kwargs, fixed_noise_size=16
     )
     gan_model.summary(save=True)
     gan_model.fit(

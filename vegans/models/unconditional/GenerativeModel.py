@@ -85,6 +85,7 @@ class GenerativeModel(ABC):
             "x_dim": x_dim, "z_dim": z_dim, "ngpu": ngpu, "folder": folder, "optimizers": self.optimizers,
             "device": self.device, "loss_functions": self.loss_functions
         }
+        self._init_run = True
 
     def _define_optimizers(self, optim, optim_kwargs):
         self._opt_kwargs = {}
@@ -211,6 +212,11 @@ class GenerativeModel(ABC):
             assert y_train.shape[2:] == self.y_dim[1:], (
                 "Wrong input shape for y_train. Given: {}. Needed: {}.".format(y_train.shape, self.y_dim)
             )
+            if len(y_train.shape) == 4:
+                assert X_train.shape == y_train.shape, (
+                    "If y_train is an image (Image-to-Image translation task) it must have the same shape as X_train" +
+                    " to be concatenated before passing it to the discriminator. x_shape: {}. y_shape: {}.".format(X_train.shape, y_train.shape)
+                )
             if X_test is not None:
                 assert y_train.shape[1:] == y_test.shape[1:], (
                     "y_train and y_test must have same dimensions. Given: {} and {}.".format(y_train.shape[1:], y_test.shape[1:])
@@ -288,6 +294,8 @@ class GenerativeModel(ABC):
         enable_tensorboard : bool, optional
             Flag to indicate whether subdirectory folder/tensorboard should be created to log losses and images.
         """
+        if not self._init_run:
+            raise ValueError("Run initializer of the GenerativeModel class is your subclass!")
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = self._set_up_training(
             X_train, y_train=None, X_test=X_test, y_test=None, epochs=epochs, batch_size=batch_size, steps=steps,
             print_every=print_every, save_model_every=save_model_every, save_images_every=save_images_every,
@@ -387,7 +395,7 @@ class GenerativeModel(ABC):
         time_per_batch = np.mean(self.batch_training_times) / print_every
 
         print("\n")
-        print("Time left: ~{} minutes (Batches remaining: {}).".format(
+        print("Time left: ~{} minutes (Steps remaining: {}).".format(
             np.round(remaining_batches*time_per_batch/60, 3), remaining_batches
             )
         )

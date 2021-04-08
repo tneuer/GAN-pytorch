@@ -85,7 +85,7 @@ if __name__ == '__main__':
     adversariat = MyAdversariat(x_dim=im_dim)
     gan_model = ConditionalWassersteinGAN(
         generator=generator, adversariat=adversariat,
-        x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder=None, optim=None,
+        x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/CGAN", optim=None,
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
     )
     gan_model.summary(save=True)
