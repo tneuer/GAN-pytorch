@@ -5,7 +5,7 @@ import vegans.utils.utils as utils
 
 from torch import nn
 from vegans.utils.layers import LayerReshape, LayerPrintSize
-from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP, LSGAN
+from vegans.GAN import VanillaGAN, WassersteinGAN, WassersteinGANGP, LSGAN, LRGAN
 
 if __name__ == '__main__':
 

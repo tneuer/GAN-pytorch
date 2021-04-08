@@ -84,5 +84,6 @@ class ConditionalWassersteinGANGP(ConditionalGAN1v1):
             "Adversariat": adv_loss,
             "Adversariat_fake": adv_loss_fake,
             "Adversariat_real": adv_loss_real,
-            "Adversariat_grad": adv_loss_grad
+            "Adversariat_grad": adv_loss_grad,
+            "RealFakeRatio": adv_loss_real / adv_loss_fake
         })

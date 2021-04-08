@@ -57,7 +57,6 @@ class ConditionalGAN1v1(ConditionalGenerativeModel, GAN1v1):
         else:
             self._calculate_generator_loss(X_batch=X_batch, Z_batch=Z_batch, y_batch=y_batch)
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch, y_batch=y_batch)
-            self._losses["Loss/LossRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
 
     def _calculate_generator_loss(self, X_batch, Z_batch, y_batch):
         fake_images = self.generate(y=y_batch, z=Z_batch)
@@ -83,4 +82,5 @@ class ConditionalGAN1v1(ConditionalGenerativeModel, GAN1v1):
             "Adversariat": adv_loss,
             "Adversariat_fake": adv_loss_fake,
             "Adversariat_real": adv_loss_real,
+            "RealFakeRatio": adv_loss_real / adv_loss_fake
         })

@@ -1,18 +1,12 @@
-import os
 import torch
 
-import numpy as np
+from torch.nn import BCELoss, L1Loss
+from torch.nn import MSELoss as L2Loss
 
-from vegans.utils.networks import Generator, Adversariat
+from vegans.utils.networks import Generator, Adversariat, Encoder
 from vegans.models.unconditional.GenerativeModel import GenerativeModel
 
-
-class GAN1v1(GenerativeModel):
-    """ Special half abstract class for GAN with structure of one generator and
-    one discriminator / critic. Examples are the original `VanillaGAN`, `WassersteinGAN`
-    and `WassersteinGANGP`.
-    """
-
+class LRGAN(GenerativeModel):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -20,11 +14,12 @@ class GAN1v1(GenerativeModel):
             self,
             generator,
             adversariat,
+            encoder,
             x_dim,
             z_dim,
-            adv_type,
             optim=None,
             optim_kwargs=None,
+            lambda_L1=10,
             fixed_noise_size=32,
             device=None,
             folder="./GAN1v1",
@@ -33,36 +28,61 @@ class GAN1v1(GenerativeModel):
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         self.generator = Generator(generator, input_size=z_dim, device=device, ngpu=ngpu)
-        self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, device=device, ngpu=ngpu)
-        self.neural_nets = {"Generator": self.generator, "Adversariat": self.adversariat}
+        self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type="Discriminator", device=device, ngpu=ngpu)
+        self.encoder = Encoder(encoder, input_size=x_dim, device=device, ngpu=ngpu)
+        self.neural_nets = {
+            "Generator": self.generator, "Adversariat": self.adversariat, "Encoder": self.encoder
+        }
 
         GenerativeModel.__init__(
             self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
-        assert hasattr(self, "generator"), "Model must have attribute 'generator'."
-        assert hasattr(self, "adversariat"), "Model must have attribute 'adversariat'."
+        self.lambda_L1 = lambda_L1
+        self.hyperparameters["lambda_L1"] = lambda_L1
+
+    def _default_optimizer(self):
+        return torch.optim.Adam
+
+    def _define_loss(self):
+        self.loss_functions = {"Generator": BCELoss(), "Adversariat": BCELoss(), "L1": L1Loss()}
 
 
     #########################################################################
     # Actions during training
     #########################################################################
+    def encode(self, x):
+        return self.encoder(x)
+
     def calculate_losses(self, X_batch, Z_batch, who=None):
         if who == "Generator":
             self._calculate_generator_loss(X_batch=X_batch, Z_batch=Z_batch)
         elif who == "Adversariat":
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch)
+        elif who == "Encoder":
+            self._calculate_encoder_loss(X_batch=X_batch, Z_batch=Z_batch)
         else:
-            self._calculate_generator_loss(X_batch=X_batch, Z_batch=Z_batch)
+            self._calculate_generator_loss(Z_batch=Z_batch)
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch)
+            self._losses["RealFakeRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
 
-    def _calculate_generator_loss(self, X_batch, Z_batch):
+    def _calculate_generator_loss(self, Z_batch):
         fake_images = self.generate(z=Z_batch)
         fake_predictions = self.predict(x=fake_images)
-        gen_loss = self.loss_functions["Generator"](
+        encoded_space = self.encode(x=fake_images)
+
+        gen_loss_original = self.loss_functions["Generator"](
             fake_predictions, torch.ones_like(fake_predictions, requires_grad=False)
         )
-        self._losses.update({"Generator": gen_loss})
+        latent_space_regression = self.loss_functions["L1"](
+            fake_images, encoded_space
+        )
+        gen_loss = gen_loss_original + self.lambda_L1*latent_space_regression
+        self._losses.update({
+            "Generator": gen_loss,
+            "Generator_Original": gen_loss_original,
+            "Generator_L1": latent_space_regression
+        })
 
     def _calculate_adversariat_loss(self, X_batch, Z_batch):
         fake_images = self.generate(z=Z_batch).detach()
@@ -80,5 +100,14 @@ class GAN1v1(GenerativeModel):
             "Adversariat": adv_loss,
             "Adversariat_fake": adv_loss_fake,
             "Adversariat_real": adv_loss_real,
-            "RealFakeRatio": adv_loss_real / adv_loss_fake
+        })
+
+    def _calculate_encoder_loss(self, X_batch, Z_batch):
+        fake_images = self.generate(z=Z_batch).detach()
+        encoded_space = self.encoder(fake_images)
+        latent_space_regression = self.loss_functions["L1"](
+            fake_images, encoded_space
+        )
+        self._losses.update({
+            "Encoder": latent_space_regression
         })

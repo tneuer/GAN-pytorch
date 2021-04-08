@@ -120,13 +120,23 @@ Some of the code has been inspired by some existing GAN implementations:
 
   - Feature loss
 
-  - Improve Doc for networks
+  - Rename GAN1v1 -> AbstractGAN1v1
 
-  - Do not save Discriminator
+  - Rename ConditionalGAN1v1 -> AbstractConditionalGAN1v1
+
+  - Rename GenerativeModel -> AbstractGenerativeModel
   
+  - Rename ConditionalGenerativeModel -> AbstractConditionalGenerativeModel
+  
+  - Improve Doc for networks
+  
+  - Do not save Discriminator
+    
   - Include sources in jupyter
     
   - Include images in jupyter
+    
+  - Make all examples work nicely
     
   - Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/
     
