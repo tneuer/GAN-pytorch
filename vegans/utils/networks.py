@@ -95,7 +95,7 @@ class NeuralNetwork(Module):
 
 class Generator(NeuralNetwork):
     def __init__(self, network, input_size, device, ngpu):
-        super(Generator, self).__init__(network, input_size=input_size, name="Generator", device=device, ngpu=ngpu)
+        super().__init__(network, input_size=input_size, name="Generator", device=device, ngpu=ngpu)
 
 
 class Adversariat(NeuralNetwork):
@@ -118,7 +118,7 @@ class Adversariat(NeuralNetwork):
             "Last layer activation function of {} needs to be one of '{}'.".format(adv_type, valid_last_layer)
         )
 
-        super(Adversariat, self).__init__(network, input_size=input_size, name="Adversariat", device=device, ngpu=ngpu)
+        super().__init__(network, input_size=input_size, name="Adversariat", device=device, ngpu=ngpu)
 
     def predict(self, x):
         return self(x)

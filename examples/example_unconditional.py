@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     generator = MyGenerator(z_dim=z_dim)
     adversariat = MyAdversariat(x_dim=im_dim)
-    gan_model = WassersteinGANGP(
+    gan_model = WassersteinGAN(
         generator=generator, adversariat=adversariat,
         z_dim=z_dim, x_dim=im_dim, folder="TrainedModels/GAN", optim={"Generator": torch.optim.Adam},
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}

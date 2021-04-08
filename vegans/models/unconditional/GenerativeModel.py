@@ -93,7 +93,7 @@ class GenerativeModel(ABC):
         if isinstance(optim_kwargs, dict):
             for name, opt_kwargs in optim_kwargs.items():
                 self._opt_kwargs[name] = opt_kwargs
-            self._check_dict_keys(self._opt_kwargs, where="_define_optimizer_kwargs")
+        self._check_dict_keys(param_dict=self._opt_kwargs, where="_define_optimizers_kwargs")
 
         self._opt = {}
         if optim is None:
@@ -105,10 +105,10 @@ class GenerativeModel(ABC):
             for name, _ in self.neural_nets.items():
                 if name not in self._opt:
                     self._opt[name] = self._default_optimizer()
-            self._check_dict_keys(param_dict=self._opt, where="_define_optimizers")
         else:
             for name, _ in self.neural_nets.items():
                 self._opt[name] = optim
+        self._check_dict_keys(param_dict=self._opt, where="_define_optimizers")
 
         self.optimizers = {}
         for name, network in self.neural_nets.items():
@@ -132,8 +132,6 @@ class GenerativeModel(ABC):
         assert hasattr(self, "device"), "Model must have attribute 'device'."
         assert hasattr(self, "optimizers"), "Model must have attribute 'optimizers'."
         assert isinstance(self.ngpu, int) and self.ngpu >= 0, "ngpu must be positive integer. Given: {}.".format(ngpu)
-        for name, _ in self.neural_nets.items():
-            assert name in self.optimizers, "{} does not have a corresponding optimizer but is needed.".format(name)
         assert len(self.z_dim) == 1 or len(self.z_dim) == 3, (
             "z_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(z_dim)
         )
@@ -141,6 +139,7 @@ class GenerativeModel(ABC):
             "x_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(x_dim)
         )
         assert isinstance(self.neural_nets, dict), "'neural_nets' attribute of GenerativeModel must be dictionary."
+        self._check_dict_keys(self.optimizers, where="_define_optimizer_kwargs")
 
     @abstractmethod
     def _default_optimizer(self):
@@ -216,7 +215,6 @@ class GenerativeModel(ABC):
                 assert y_train.shape[1:] == y_test.shape[1:], (
                     "y_train and y_test must have same dimensions. Given: {} and {}.".format(y_train.shape[1:], y_test.shape[1:])
                 )
-
 
     def _create_steps(self, steps):
         self.steps = {}
@@ -298,11 +296,8 @@ class GenerativeModel(ABC):
         max_batches = len(train_dataloader)
         test_x_batch = iter(test_dataloader).next().to(self.device) if X_test is not None else None
         print_every, save_model_every, save_images_every, save_losses_every = save_periods
-        if test_x_batch is not None:
-            self._log(
-                X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), batch=0, max_batches=max_batches, epoch=0, max_epochs=epochs,
-                print_every=print_every, is_train=False, log_images=False
-            )
+        if save_images_every is not None:
+            self._log_images(images=self.generate(z=self.fixed_noise), step=0, writer=writer_train)
 
         for epoch in range(epochs):
             print("---"*20)
@@ -314,38 +309,40 @@ class GenerativeModel(ABC):
                 X = X.to(self.device)
                 Z = self.sample(n=len(X))
                 for name, _ in self.neural_nets.items():
-                    self._train(X_batch=X, Z_batch=Z, who=name)
+                    for _ in range(self.steps[name]):
+                        self._losses = {}
+                        self.calculate_losses(X_batch=X, Z_batch=Z, who=name)
+                        self._zero_grad(who=name)
+                        self._backward(who=name)
+                        self._step(who=name)
 
                 if print_every is not None and step % print_every == 0:
-                    log_kwargs = {
-                        "batch": batch, "max_batches": max_batches, "epoch": epoch, "max_epochs": epochs,
-                        "print_every": print_every, "log_images": False
-                    }
-                    self._log(X_batch=X, Z_batch=Z, is_train=True, writer=writer_train, **log_kwargs)
-                    if test_x_batch is not None:
-                        self._log(
-                            X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), batch=0, max_batches=max_batches,
-                            epoch=0, max_epochs=epochs, print_every=print_every, is_train=False, log_images=False
-                        )
+                    self._losses = {}
+                    self.calculate_losses(X_batch=X, Z_batch=Z)
+                    self._summarise_batch(
+                        batch=batch, max_batches=max_batches, epoch=epoch,
+                        max_epochs=epochs, print_every=print_every
+                    )
 
                 if save_model_every is not None and step % save_model_every == 0:
                     self.save(name="models/model_{}.torch".format(step))
 
                 if save_images_every is not None and step % save_images_every == 0:
-                    self._log_images(images=self.generator(self.fixed_noise), step=step, writer=writer_train)
+                    self._log_images(images=self.generate(z=self.fixed_noise), step=step, writer=writer_train)
                     self._save_losses_plot()
 
                 if save_losses_every is not None and step % save_losses_every == 0:
-                    self._log_losses(X_batch=X, Z_batch=Z, is_train=True)
+                    self._log_losses(X_batch=X, Z_batch=Z, mode="Train")
+                    if enable_tensorboard:
+                        self._log_scalars(step=step, writer=writer_train)
                     if test_x_batch is not None:
-                        self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), is_train=False)
+                        self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(n=len(test_x_batch)), mode="Test")
+                        if enable_tensorboard:
+                            self._log_scalars(step=step, writer=writer_test)
+
 
         self._clean_up(writers=[writer_train, writer_test])
 
-
-    @abstractmethod
-    def _train(self, X_batch, Z_batch, who=None):
-        pass
 
     @abstractmethod
     def calculate_losses(self, X_batch, Z_batch, who=None):
@@ -374,18 +371,6 @@ class GenerativeModel(ABC):
     #########################################################################
     # Logging during training
     #########################################################################
-    def _log(self, X_batch, Z_batch, batch, max_batches, epoch, max_epochs, print_every,
-            is_train=True, log_images=False, writer=None):
-        step = epoch*max_batches + batch
-        if X_batch is not None:
-            self.calculate_losses(X_batch=X_batch, Z_batch=Z_batch)
-            self._log_scalars(step=step, writer=writer)
-        if log_images and self.images_produced:
-            self._log_images(images=self.generator(self.fixed_noise), step=step, writer=writer)
-
-        if is_train:
-            self._summarise_batch(batch, max_batches, epoch, max_epochs, print_every)
-
     def _summarise_batch(self, batch, max_batches, epoch, max_epochs, print_every):
         step = epoch*max_batches + batch
         max_steps = max_epochs*max_batches
@@ -408,13 +393,6 @@ class GenerativeModel(ABC):
         )
         print("\n")
         self.current_timer = time.perf_counter()
-
-    def _log_scalars(self, step, writer):
-        if writer is not None:
-            for name, loss in self._losses.items():
-                writer.add_scalar("Loss/{}".format(name), loss.item(), step)
-            writer.add_scalar("Time/Total", self.total_training_time / 60, step)
-            writer.add_scalar("Time/Batch", np.mean(self.batch_training_times) / 60, step)
 
     def _log_images(self, images, step, writer):
         assert len(self.adversariat.input_size) > 1, (
@@ -443,8 +421,7 @@ class GenerativeModel(ABC):
             ax.axis("off")
         return fig, axs
 
-    def _log_losses(self, X_batch, Z_batch, is_train):
-        mode = "Train" if is_train else "Test"
+    def _log_losses(self, X_batch, Z_batch, mode):
         self.calculate_losses(X_batch=X_batch, Z_batch=Z_batch)
         self._append_losses(mode=mode)
 
@@ -470,6 +447,13 @@ class GenerativeModel(ABC):
             fig, axs = plot_losses(self.logged_losses, show=False, share=False)
             plt.savefig(self.folder+"losses.png")
             plt.close()
+
+    def _log_scalars(self, step, writer):
+        if writer is not None:
+            for name, loss in self._losses.items():
+                writer.add_scalar("Loss/{}".format(name), loss.item(), step)
+            writer.add_scalar("Time/Total", self.total_training_time / 60, step)
+            writer.add_scalar("Time/Batch", np.mean(self.batch_training_times) / 60, step)
 
     #########################################################################
     # After training

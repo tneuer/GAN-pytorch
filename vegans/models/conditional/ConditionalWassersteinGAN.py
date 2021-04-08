@@ -25,8 +25,7 @@ class ConditionalWassersteinGAN(ConditionalGAN1v1):
             folder="./WassersteinGAN",
             ngpu=None):
 
-        ConditionalGAN1v1.__init__(
-            self,
+        super().__init__(
             generator=generator, adversariat=adversariat,
             x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,

@@ -47,32 +47,7 @@ class GAN1v1(GenerativeModel):
     #########################################################################
     # Actions during training
     #########################################################################
-    def _train(self, X_batch, Z_batch, who):
-        if who == "Generator":
-            gen_steps = self.steps["Generator"]
-            self._train_generator(Z_batch=Z_batch, gen_steps=gen_steps)
-        elif who == "Adversariat":
-            adv_steps = self.steps["Adversariat"]
-            self._train_adversariat(X_batch=X_batch, Z_batch=Z_batch, adv_steps=adv_steps)
-        else:
-            raise NotImplementedError("Passed wrong network name. Called: {}.".format(who))
-
-    def _train_adversariat(self, X_batch, Z_batch, adv_steps):
-        for _ in range(adv_steps):
-            self.calculate_losses(X_batch=X_batch, Z_batch=Z_batch, who="Adversariat")
-            self._zero_grad()
-            self._backward(who="Adversariat")
-            self._step(who="Adversariat")
-
-    def _train_generator(self, Z_batch, gen_steps):
-        for _ in range(gen_steps):
-            self.calculate_losses(X_batch=None, Z_batch=Z_batch, who="Generator")
-            self._zero_grad()
-            self._backward(who="Generator")
-            self._step(who="Generator")
-
     def calculate_losses(self, X_batch, Z_batch, who=None):
-        self._losses = {}
         if who == "Generator":
             self._calculate_generator_loss(Z_batch=Z_batch)
         elif who == "Adversariat":
@@ -80,7 +55,7 @@ class GAN1v1(GenerativeModel):
         else:
             self._calculate_generator_loss(Z_batch=Z_batch)
             self._calculate_adversariat_loss(X_batch=X_batch, Z_batch=Z_batch)
-            self._losses["Loss/LossRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
+            self._losses["RealFakeRatio"] = self._losses["Adversariat_real"]/self._losses["Adversariat_fake"]
 
     def _calculate_generator_loss(self, Z_batch):
         fake_images = self.generate(z=Z_batch)

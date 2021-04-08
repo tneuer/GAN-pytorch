@@ -24,8 +24,7 @@ class WassersteinGAN(GAN1v1):
             folder="./WassersteinGAN",
             ngpu=None):
 
-        GAN1v1.__init__(
-            self,
+        super().__init__(
             generator=generator, adversariat=adversariat,
             z_dim=z_dim, x_dim=x_dim, adv_type="Critic",
             optim=optim, optim_kwargs=optim_kwargs,

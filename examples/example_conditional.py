@@ -19,10 +19,10 @@ if __name__ == '__main__':
     epochs = 20
     batch_size = 32
 
-    X_train = X_train.reshape((-1, 1, 32, 32))
+    X_train = X_train.reshape((-1, 1, 32, 32))[:5000]
     X_test = X_test.reshape((-1, 1, 32, 32))
     one_hot_encoder = OneHotEncoder(sparse=False)
-    y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))
+    y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))[:5000]
     y_test = one_hot_encoder.transform(y_test.reshape(-1, 1))
 
     im_dim = X_train.shape[1:]
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     adversariat = MyAdversariat(x_dim=im_dim)
     gan_model = ConditionalWassersteinGAN(
         generator=generator, adversariat=adversariat,
-        x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/ConditionalGAN", optim=None,
+        x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder=None, optim=None,
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
     )
     gan_model.summary(save=True)

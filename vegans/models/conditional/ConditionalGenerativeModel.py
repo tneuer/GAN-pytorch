@@ -117,14 +117,14 @@ class ConditionalGenerativeModel(GenerativeModel):
             print_every=print_every, save_model_every=save_model_every, save_images_every=save_images_every,
             save_losses_every=save_losses_every, enable_tensorboard=enable_tensorboard
         )
-        nr_batches = len(train_dataloader)
+        max_batches = len(train_dataloader)
         test_x_batch = next(iter(test_dataloader))[0].to(self.device) if X_test is not None else None
         test_y_batch = next(iter(test_dataloader))[1].to(self.device) if X_test is not None else None
         print_every, save_model_every, save_images_every, save_losses_every = save_periods
-        if test_x_batch is not None:
-            self._log(
-                X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, batch=0, max_batches=nr_batches,
-                epoch=0, max_epochs=epochs, print_every=print_every, is_train=False, log_images=False
+        if save_images_every is not None:
+            self._log_images(
+                images=self.generate(y=self.fixed_labels, z=self.fixed_noise),
+                step=0, writer=writer_train
             )
 
         for epoch in range(epochs):
@@ -133,36 +133,47 @@ class ConditionalGenerativeModel(GenerativeModel):
             print("---"*20)
             for batch, (X, y) in enumerate(train_dataloader):
                 batch += 1
-                step = epoch*nr_batches + batch
+                step = epoch*max_batches + batch
                 X = X.to(self.device)
                 y = y.to(self.device)
                 Z = self.sample(n=len(X))
                 for name, _ in self.neural_nets.items():
-                    self._train(X_batch=X, Z_batch=Z, y_batch=y, who=name)
+                    for _ in range(self.steps[name]):
+                        self._losses = {}
+                        self.calculate_losses(X_batch=X, Z_batch=Z, y_batch=y, who=name)
+                        self._zero_grad(who=name)
+                        self._backward(who=name)
+                        self._step(who=name)
 
                 if print_every is not None and step % print_every == 0:
-                    log_kwargs = {
-                        "batch": batch, "max_batches": nr_batches, "epoch": epoch, "max_epochs": epochs,
-                        "print_every": print_every, "log_images": False
-                    }
-                    self._log(X_batch=X, Z_batch=Z, y_batch=y, is_train=True, writer=writer_train, **log_kwargs)
-                    if test_x_batch is not None:
-                        self._log(
-                            X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, batch=0,
-                            max_batches=nr_batches, epoch=0, max_epochs=epochs, print_every=print_every, is_train=False, log_images=False
-                        )
+                    self._losses = {}
+                    self.calculate_losses(X_batch=X, Z_batch=Z, y_batch=y)
+                    self._summarise_batch(
+                        batch=batch, max_batches=max_batches, epoch=epoch,
+                        max_epochs=epochs, print_every=print_every
+                    )
 
                 if save_model_every is not None and step % save_model_every == 0:
                     self.save(name="models/model_{}.torch".format(step))
 
                 if save_images_every is not None and step % save_images_every == 0:
-                    self._log_images(images=self.generate(y=self.fixed_labels, z=self.fixed_noise), step=step, writer=writer_train)
+                    self._log_images(
+                        images=self.generate(y=self.fixed_labels, z=self.fixed_noise),
+                        step=step, writer=writer_train
+                    )
                     self._save_losses_plot()
 
                 if save_losses_every is not None and step % save_losses_every == 0:
-                    self._log_losses(X_batch=X, Z_batch=Z, y_batch=y, is_train=True)
+                    self._log_losses(X_batch=X, Z_batch=Z, y_batch=test_y_batch, mode="Train")
+                    if enable_tensorboard:
+                        self._log_scalars(step=step, writer=writer_train)
                     if test_x_batch is not None:
-                        self._log_losses(X_batch=test_x_batch, Z_batch=self.sample(len(test_x_batch)), y_batch=test_y_batch, is_train=False)
+                        self._log_losses(
+                            X_batch=test_x_batch, Z_batch=self.sample(n=len(test_x_batch)),
+                            y_batch=test_y_batch, mode="Test"
+                        )
+                        if enable_tensorboard:
+                            self._log_scalars(step=step, writer=writer_test)
 
         self._clean_up(writers=[writer_train, writer_test])
 
@@ -170,18 +181,6 @@ class ConditionalGenerativeModel(GenerativeModel):
     #########################################################################
     # Logging during training
     #########################################################################
-    def _log(self, X_batch, Z_batch, y_batch, batch, max_batches, epoch, max_epochs, print_every,
-            is_train=True, log_images=False, writer=None):
-        step = epoch*max_batches + batch
-        if X_batch is not None:
-            self.calculate_losses(X_batch=X_batch, Z_batch=Z_batch, y_batch=y_batch)
-            self._log_scalars(step=step, writer=writer)
-        if log_images and self.images_produced:
-            self._log_images(images=self.generate(y=self.fixed_labels, z=self.fixed_noise), step=step, writer=writer)
-
-        if is_train:
-            self._summarise_batch(batch, max_batches, epoch, max_epochs, print_every)
-
     def _log_images(self, images, step, writer):
         assert len(self.adversariat.input_size) > 1, (
             "Called _log_images in GenerativeModel for adversariat.input_size = {}.".format(self.adversariat.input_size)
@@ -201,8 +200,8 @@ class ConditionalGenerativeModel(GenerativeModel):
         plt.close()
         print("Images logged.")
 
-    def _log_losses(self, X_batch, Z_batch, y_batch, is_train):
-        mode = "Train" if is_train else "Test"
+    def _log_losses(self, X_batch, Z_batch, y_batch, mode):
+        self._losses = {}
         self.calculate_losses(X_batch=X_batch, Z_batch=Z_batch, y_batch=y_batch)
         self._append_losses(mode=mode)
 
