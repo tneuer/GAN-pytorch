@@ -143,4 +143,12 @@ class Adversariat(NeuralNetwork):
 
 class Encoder(NeuralNetwork):
     def __init__(self, network, input_size, device, ngpu):
+        valid_last_layer = [torch.nn.Linear, torch.nn.Identity]
+        try:
+            last_layer_type = type(network[-1])
+        except TypeError:
+            last_layer_type = type(network.__dict__["_modules"]["output"])
+        assert last_layer_type in valid_last_layer, (
+            "Last layer activation function of Encoder needs to be one of '{}'.".format(valid_last_layer)
+        )
         super().__init__(network, input_size=input_size, name="Encoder", device=device, ngpu=ngpu)

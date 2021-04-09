@@ -102,35 +102,42 @@ Some of the code has been inspired by some existing GAN implementations:
 
 ## TODO
 
-- GAN Implementations
+- GAN Implementations (sorted by priority)
+  - BicycleGAN
+  - InfoGAN
   - BEGAN
   - EBGAN
   - VAEGAN
-  - BicycleGAN
-  - VAEGAN
-  - LR-GAN
   - CycleGAN
-  - InfoGAN
-  - Least Squares GAN
   - WassersteinGAN SpectralNorm
   - DiscoGAN
+  - CycleGAN
   - Adversarial Autoencoder
-- Layers
+- Layers 
   - Inception
   - Residual Block
   - Minibatch discrimination
 - Other
 
+  - Write tests
+  
   - Feature loss
+  
   - enable Wasserstein loss for all architectures (when it makes sense)
+  
   - Do not save Discriminator
-  - Make all examples work nicely
-  - Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/
+  
+    
 
 
 
 - Done
+  - ~~Test dependencies~~
+  - ~~LR-GAN~~
+  - ~~Least Squares GAN~~
   - ~~Include sources in jupyter~~
+  - ~~Make all examples work nicely~~
+  - ~~Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/~~
   - ~~Include images in jupyter~~
   - ~~Pix2Pix~~
   - ~~Check output dim (generator, encoder)~~

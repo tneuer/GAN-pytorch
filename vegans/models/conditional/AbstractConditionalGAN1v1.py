@@ -4,8 +4,8 @@ import torch
 import numpy as np
 
 from vegans.utils.utils import get_input_dim
-from vegans.models.unconditional.AbstractGAN1v1 import AbstractGAN1v1
 from vegans.utils.networks import Generator, Adversariat
+from vegans.models.unconditional.AbstractGAN1v1 import AbstractGAN1v1
 from vegans.models.conditional.AbstractConditionalGenerativeModel import AbstractConditionalGenerativeModel
 
 

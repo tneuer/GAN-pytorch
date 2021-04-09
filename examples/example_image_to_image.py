@@ -10,7 +10,7 @@ from vegans.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, Conditi
 
 if __name__ == '__main__':
 
-    datapath = "./data/mnist_rotate/"
+    datapath = "../data/mnist_rotate/"
     X_train, y_train, X_test, y_test = utils.load_mnist(datapath, normalize=True, pad=0, return_datasets=False)
 
     lr_gen = 0.0001

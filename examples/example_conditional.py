@@ -6,12 +6,12 @@ import vegans.utils.utils as utils
 from torch import nn
 from sklearn.preprocessing import OneHotEncoder
 from vegans.utils.layers import LayerReshape, LayerPrintSize
-from vegans.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP
+from vegans.GAN import ConditionalVanillaGAN, ConditionalWassersteinGAN, ConditionalWassersteinGANGP, ConditionalLRGAN
 
 
 if __name__ == '__main__':
 
-    datapath = "./data/mnist/"
+    datapath = "../data/mnist/"
     X_train, y_train, X_test, y_test = utils.load_mnist(datapath, normalize=True, pad=2, return_datasets=False)
 
     lr_gen = 0.0001
@@ -19,10 +19,10 @@ if __name__ == '__main__':
     epochs = 2
     batch_size = 32
 
-    X_train = X_train.reshape((-1, 1, 32, 32))[:200]
+    X_train = X_train.reshape((-1, 1, 32, 32))
     X_test = X_test.reshape((-1, 1, 32, 32))
     one_hot_encoder = OneHotEncoder(sparse=False)
-    y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))[:200]
+    y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))
     y_test = one_hot_encoder.transform(y_test.reshape(-1, 1))
 
     im_dim = X_train.shape[1:]
@@ -71,7 +71,25 @@ if __name__ == '__main__':
                 nn.LeakyReLU(0.2),
                 nn.Linear(256, 1)
             )
-            self.output = nn.Linear(1, 1)
+            self.output = nn.Sigmoid()
+
+        def forward(self, x):
+            x = self.hidden_part(x)
+            y_pred = self.output(x)
+            return y_pred
+
+    class MyEncoder(nn.Module):
+        def __init__(self, x_dim):
+            super().__init__()
+            self.hidden_part = nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(int(np.prod(x_dim)), 256),
+                nn.LeakyReLU(0.2),
+                nn.Linear(256, 128),
+                nn.LeakyReLU(0.2),
+                nn.Linear(128, z_dim)
+            )
+            self.output = nn.Identity()
 
         def forward(self, x):
             x = self.hidden_part(x)
@@ -83,8 +101,14 @@ if __name__ == '__main__':
     #########################################################################
     generator = MyGenerator(z_dim=z_dim)
     adversariat = MyAdversariat(x_dim=im_dim)
-    gan_model = ConditionalWassersteinGAN(
-        generator=generator, adversariat=adversariat,
+    encoder = MyEncoder(x_dim=im_dim)
+    # gan_model = ConditionalWassersteinGAN(
+    #     generator=generator, adversariat=adversariat,
+    #     x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/CGAN", optim=None,
+    #     optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
+    # )
+    gan_model = ConditionalLRGAN(
+        generator=generator, adversariat=adversariat, encoder=encoder,
         x_dim=im_dim, z_dim=z_dim, y_dim=label_dim, folder="TrainedModels/CGAN", optim=None,
         optim_kwargs={"Generator": {"lr": lr_gen}, "Adversariat": {"lr": lr_adv}}, fixed_noise_size=16
     )
@@ -104,4 +128,6 @@ if __name__ == '__main__':
         enable_tensorboard=True
     )
     samples, losses = gan_model.get_training_results(by_epoch=False)
-    gan_model.save()
+    utils.plot_images(images=samples.reshape(-1, 32, 32))
+    utils.plot_losses(losses=losses)
+    # gan_model.save()
