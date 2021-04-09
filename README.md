@@ -118,14 +118,15 @@ Some of the code has been inspired by some existing GAN implementations:
 - Other
 
   - Feature loss
-- return numpy array instead o tensor for generate. 
-  - Automatically use evaluation mode
-- enable Wasserstein loss for all architectures (when it makes sense)
+  - enable Wasserstein loss for all architectures (when it makes sense)
   - Do not save Discriminator
-- Include sources in jupyter
+  - Include sources in jupyter
   - Include images in jupyter
-- Make all examples work nicely
+  - Make all examples work nicely
   - Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/
+
+
+
 - Done
   - ~~Pix2Pix~~
   - ~~Check output dim (generator, encoder)~~
@@ -134,6 +135,8 @@ Some of the code has been inspired by some existing GAN implementations:
   - ~~Rename AbstractConditionalGAN1v1 -> AbstractAbstractConditionalGAN1v1~~
   - ~~Rename AbstractGenerativeModel -> AbstractAbstractGenerativeModel~~
   - ~~Rename AbstractConditionalGenerativeModel -> AbstractAbstractConditionalGenerativeModel~~
+  - ~~return numpy array instead o tensor for generate.~~
+  - ~~Automatically use evaluation mode~~
 
 
 

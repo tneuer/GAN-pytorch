@@ -86,6 +86,7 @@ class AbstractGenerativeModel(ABC):
             "device": self.device, "loss_functions": self.loss_functions
         }
         self._init_run = True
+        self.eval()
 
     def _define_optimizers(self, optim, optim_kwargs):
         self._opt_kwargs = {}
@@ -237,20 +238,20 @@ class AbstractGenerativeModel(ABC):
     def _set_up_saver(self, print_every, save_model_every, save_images_every, save_losses_every, nr_batches):
         if isinstance(print_every, str):
             save_epochs = float(print_every.split("e")[0])
-            print_every = int(save_epochs*nr_batches)
+            print_every = max([int(save_epochs*nr_batches), 1])
         if save_model_every is not None:
             os.mkdir(self.folder+"models/")
             if isinstance(save_model_every, str):
                 save_epochs = float(save_model_every.split("e")[0])
-                save_model_every = int(save_epochs*nr_batches)
+                save_model_every = max([int(save_epochs*nr_batches), 1])
         if save_images_every is not None:
             os.mkdir(self.folder+"images/")
             if isinstance(save_images_every, str):
                 save_epochs = float(save_images_every.split("e")[0])
-                save_images_every = int(save_epochs*nr_batches)
+                save_images_every = max([int(save_epochs*nr_batches), 1])
         if isinstance(save_losses_every, str):
             save_epochs = float(save_losses_every.split("e")[0])
-            save_losses_every = int(save_epochs*nr_batches)
+            save_losses_every = max([int(save_epochs*nr_batches), 1])
         self.total_training_time = 0
         self.current_timer = time.perf_counter()
         self.batch_training_times = []
@@ -304,9 +305,10 @@ class AbstractGenerativeModel(ABC):
         max_batches = len(train_dataloader)
         test_x_batch = iter(test_dataloader).next().to(self.device) if X_test is not None else None
         print_every, save_model_every, save_images_every, save_losses_every = save_periods
+
+        self.train()
         if save_images_every is not None:
             self._log_images(images=self.generate(z=self.fixed_noise), step=0, writer=writer_train)
-
         for epoch in range(epochs):
             print("---"*20)
             print("EPOCH:", epoch+1)
@@ -348,7 +350,7 @@ class AbstractGenerativeModel(ABC):
                         if enable_tensorboard:
                             self._log_scalars(step=step, writer=writer_test)
 
-
+        self.eval()
         self._clean_up(writers=[writer_train, writer_test])
 
 
@@ -417,7 +419,7 @@ class AbstractGenerativeModel(ABC):
 
     @staticmethod
     def _build_images(images):
-        images = images.cpu().detach().numpy()
+        images = images.detach().cpu().numpy()
         if len(images.shape) == 4:
             images = images.reshape((-1, *images.shape[-2:]))
         nrows = int(np.sqrt(len(images)))
@@ -489,7 +491,7 @@ class AbstractGenerativeModel(ABC):
         losses_dict : dict
             Dictionary containing all loss types logged during training
         """
-        samples = self.generate(self.fixed_noise).detach().cpu().numpy()
+        samples = self.generate(self.fixed_noise)
         losses = self.get_losses(by_epoch=by_epoch, agg=agg)
         return samples, losses
 
@@ -608,7 +610,10 @@ class AbstractGenerativeModel(ABC):
         np.array
             Array with one output per x indicating the realness of an input.
         """
-        return self.adversariat(x)
+        if not isinstance(x, torch.Tensor):
+            x = torch.from_numpy(x).to(self.device)
+        predictions = self.adversariat(x)
+        return predictions
 
     def get_hyperparameters(self):
         """ Returns a dictionary containing all relevant hyperparameters.
@@ -642,11 +647,13 @@ class AbstractGenerativeModel(ABC):
     def eval(self):
         """ Set all networks to evaluation mode.
         """
+        self._is_training = False
         [network.eval() for name, network in self.neural_nets.items()]
 
     def train(self):
         """ Set all networks to training mode.
         """
+        self._is_training = True
         [network.train() for name, network in self.neural_nets.items()]
 
     def to(self, device):
@@ -661,7 +668,10 @@ class AbstractGenerativeModel(ABC):
             raise ValueError("Either 'z' or 'n' must be not None.")
         elif n is not None:
             z = self.sample(n=n)
-        return self.generator(z)
+        sample = self.generator(z)
+        if self._is_training:
+            return sample
+        return sample.detach().cpu().numpy()
 
     def __str__(self):
         self.summary()

@@ -53,6 +53,7 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
         )
         self.y_dim = tuple([y_dim]) if isinstance(y_dim, int) else y_dim
         self.hyperparameters["y_dim"] = self.y_dim
+        self.eval()
 
     def _set_up_training(self, X_train, y_train, X_test, y_test, epochs, batch_size, steps,
         print_every, save_model_every, save_images_every, save_losses_every, enable_tensorboard):
@@ -114,12 +115,13 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
         test_x_batch = next(iter(test_dataloader))[0].to(self.device) if X_test is not None else None
         test_y_batch = next(iter(test_dataloader))[1].to(self.device) if X_test is not None else None
         print_every, save_model_every, save_images_every, save_losses_every = save_periods
+
+        self.train()
         if save_images_every is not None:
             self._log_images(
                 images=self.generate(y=self.fixed_labels, z=self.fixed_noise),
                 step=0, writer=writer_train
             )
-
         for epoch in range(epochs):
             print("---"*20)
             print("EPOCH:", epoch+1)
@@ -138,6 +140,8 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
                         self._backward(who=name)
                         self._step(who=name)
 
+                print(self.generator.training)
+                print(self.adversariat.training)
                 if print_every is not None and step % print_every == 0:
                     self._losses = {}
                     self.calculate_losses(X_batch=X, Z_batch=Z, y_batch=y)
@@ -168,6 +172,7 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
                         if enable_tensorboard:
                             self._log_scalars(step=step, writer=writer_test)
 
+        self.eval()
         self._clean_up(writers=[writer_train, writer_test])
 
 
@@ -220,7 +225,7 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
         losses_dict : dict
             Dictionary containing all loss types logged during training
         """
-        samples = self.generate(y=self.fixed_labels, z=self.fixed_noise).detach().cpu().numpy()
+        samples = self.generate(y=self.fixed_labels, z=self.fixed_noise)
         losses = self.get_losses(by_epoch=by_epoch, agg=agg)
         return samples, losses
 
@@ -271,4 +276,7 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
             z = self.sample(n=len(y))
 
         inpt = self.concatenate(z, y).float()
-        return self.generate(z=inpt)
+        sample = self.generator(inpt)
+        if self._is_training:
+            return sample
+        return sample.detach().cpu().numpy()

@@ -36,13 +36,19 @@ class AbstractGAN1v1(AbstractGenerativeModel):
         self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, device=device, ngpu=ngpu)
         self.neural_nets = {"Generator": self.generator, "Adversariat": self.adversariat}
 
-        AbstractGenerativeModel.__init__(
-            self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
+        super().__init__(
+            x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
-        assert (self.generator.output_size == self.x_dim), (
-            "Generator output shape must be equal to x_dim. {} vs. {}.".format(self.generator.output_size, self.x_dim)
-        )
+        if hasattr(self, "_is_conditional"):
+            assert (self.generator.output_size[1:] == self.x_dim[1:]), (
+                "Generator output shape must be equal to x_dim. {} vs. {}.".format(self.generator.output_size, self.x_dim)
+            )
+        else:
+            assert (self.generator.output_size == self.x_dim), (
+                "Generator output shape must be equal to x_dim. {} vs. {}.".format(self.generator.output_size, self.x_dim)
+            )
+
 
 
     #########################################################################

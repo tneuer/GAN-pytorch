@@ -16,7 +16,7 @@ if __name__ == '__main__':
     epochs = 2
     batch_size = 64
 
-    X_train = X_train.reshape((-1, 1, 32, 32))
+    X_train = X_train.reshape((-1, 1, 32, 32))[:100]
     X_test = X_test.reshape((-1, 1, 32, 32))
     im_dim = X_train.shape[1:]
 
@@ -91,9 +91,8 @@ if __name__ == '__main__':
         print_every=200,
         save_model_every="3e",
         save_images_every="0.25e",
-        save_losses_every=10,
+        save_losses_every=1,
         enable_tensorboard=True
     )
     samples, losses = gan_model.get_training_results(by_epoch=True)
-    print(losses)
     gan_model.save()

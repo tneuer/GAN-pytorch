@@ -90,7 +90,8 @@ class NeuralNetwork(Module):
             raise NotImplemented("Network must be Sequential or Object.")
 
     def _get_output_shape(self):
-        return self.network(torch.rand([2, *self.input_size])).data.numpy().shape
+        sample_input = torch.rand([2, *self.input_size]).to(self.device)
+        return self.network(sample_input).data.cpu().numpy().shape
 
 
     #########################################################################

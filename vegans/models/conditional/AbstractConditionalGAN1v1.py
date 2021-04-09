@@ -35,6 +35,7 @@ class AbstractConditionalGAN1v1(AbstractConditionalGenerativeModel, AbstractGAN1
 
         adv_in_dim = get_input_dim(dim1=x_dim, dim2=y_dim)
         gen_in_dim = get_input_dim(dim1=z_dim, dim2=y_dim)
+        self._is_conditional = True
         AbstractGAN1v1.__init__(
             self, generator=generator, adversariat=adversariat, x_dim=adv_in_dim, z_dim=gen_in_dim,
             adv_type=adv_type, optim=optim, optim_kwargs=optim_kwargs,

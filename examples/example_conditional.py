@@ -16,13 +16,13 @@ if __name__ == '__main__':
 
     lr_gen = 0.0001
     lr_adv = 0.00005
-    epochs = 20
+    epochs = 2
     batch_size = 32
 
-    X_train = X_train.reshape((-1, 1, 32, 32))[:5000]
+    X_train = X_train.reshape((-1, 1, 32, 32))[:200]
     X_test = X_test.reshape((-1, 1, 32, 32))
     one_hot_encoder = OneHotEncoder(sparse=False)
-    y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))[:5000]
+    y_train = one_hot_encoder.fit_transform(y_train.reshape(-1, 1))[:200]
     y_test = one_hot_encoder.transform(y_test.reshape(-1, 1))
 
     im_dim = X_train.shape[1:]
