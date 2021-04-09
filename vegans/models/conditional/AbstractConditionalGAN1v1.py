@@ -4,12 +4,12 @@ import torch
 import numpy as np
 
 from vegans.utils.utils import get_input_dim
-from vegans.models.unconditional.GAN1v1 import GAN1v1
+from vegans.models.unconditional.AbstractGAN1v1 import AbstractGAN1v1
 from vegans.utils.networks import Generator, Adversariat
-from vegans.models.conditional.ConditionalGenerativeModel import ConditionalGenerativeModel
+from vegans.models.conditional.AbstractConditionalGenerativeModel import AbstractConditionalGenerativeModel
 
 
-class ConditionalGAN1v1(ConditionalGenerativeModel, GAN1v1):
+class AbstractConditionalGAN1v1(AbstractConditionalGenerativeModel, AbstractGAN1v1):
     """ Special half abstract class for conditional GAN with structure of one generator and
     one discriminator / critic. Examples are the original `ConditionalVanillaGAN`,
     `ConditionalWassersteinGAN` and `ConditionalWassersteinGANGP`.
@@ -30,17 +30,17 @@ class ConditionalGAN1v1(ConditionalGenerativeModel, GAN1v1):
             optim_kwargs=None,
             fixed_noise_size=32,
             device=None,
-            folder="./GAN1v1",
+            folder="./AbstractGAN1v1",
             ngpu=0):
 
         adv_in_dim = get_input_dim(dim1=x_dim, dim2=y_dim)
         gen_in_dim = get_input_dim(dim1=z_dim, dim2=y_dim)
-        GAN1v1.__init__(
+        AbstractGAN1v1.__init__(
             self, generator=generator, adversariat=adversariat, x_dim=adv_in_dim, z_dim=gen_in_dim,
             adv_type=adv_type, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=0
         )
-        ConditionalGenerativeModel.__init__(
+        AbstractConditionalGenerativeModel.__init__(
             self, x_dim=x_dim, z_dim=z_dim, y_dim=y_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )

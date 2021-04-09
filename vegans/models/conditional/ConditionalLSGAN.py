@@ -1,9 +1,27 @@
+"""
+ConditionalLSGAN
+----------------
+Implements the conditional variant of the Least-Squares GAN[1].
+
+Uses the L2 norm for evaluating the realness of real and fake images.
+
+Losses:
+    - Generator: L2 (Mean Squared Error)
+    - Discriminator: L2 (Mean Squared Error)
+Default optimizer:
+    - torch.optim.Adam
+
+References
+----------
+.. [1] https://openaccess.thecvf.com/content_ICCV_2017/papers/Mao_Least_Squares_Generative_ICCV_2017_paper.pdf
+"""
+
 import torch
 
 from torch.nn import MSELoss
-from vegans.models.conditional.ConditionalGAN1v1 import ConditionalGAN1v1
+from vegans.models.conditional.AbstractConditionalGAN1v1 import AbstractConditionalGAN1v1
 
-class ConditionalLSGAN(ConditionalGAN1v1):
+class ConditionalLSGAN(AbstractConditionalGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################

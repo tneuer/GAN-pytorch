@@ -1,12 +1,34 @@
+"""
+ConditionalWassersteinGANGP
+---------------------------
+Implements the conditional variant of the Wasserstein GAN Gradient Penalized[1].
+
+Uses the Wasserstein loss to determine the realness of real and fake images.
+The Wasserstein loss has several theoretical advantages over the Jensen-Shanon divergence
+minimised by the original GAN. In this architecture the critic (discriminator) is often
+trained multiple times for every generator step.
+Lipschitz continuity is "enforced" by gradient penalization.
+
+Losses:
+    - Generator: Wasserstein
+    - Critic: Wasserstein + Gradient penalization
+Default optimizer:
+    - torch.optim.RMSprop
+
+References
+----------
+.. [1] https://arxiv.org/abs/1704.00028
+"""
+
 import torch
 
 import numpy as np
 
 from vegans.utils.utils import wasserstein_loss, concatenate
-from vegans.models.conditional.ConditionalGAN1v1 import ConditionalGAN1v1
+from vegans.models.conditional.AbstractConditionalGAN1v1 import AbstractConditionalGAN1v1
 
 
-class ConditionalWassersteinGANGP(ConditionalGAN1v1):
+class ConditionalWassersteinGANGP(AbstractConditionalGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################

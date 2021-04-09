@@ -10,6 +10,12 @@ from torch.nn import Module, Sequential
 
 
 class NeuralNetwork(Module):
+    """ Basic abstraction for single networks.
+
+    These networks form the building blocks for the generative adversarial networks.
+    Mainly do some consistency checks.
+    """
+
     def __init__(self, network, name, input_size, device, ngpu):
         super(NeuralNetwork, self).__init__()
         self.name = name
@@ -33,6 +39,8 @@ class NeuralNetwork(Module):
         if self.device=="cuda" and self.ngpu is not None:
             if self.ngpu > 1:
                 self.network = torch.nn.DataParallel(self.network)
+
+        self.output_size = self._get_output_shape()[1:]
 
     def forward(self, x):
         output = self.network(x)
@@ -81,6 +89,9 @@ class NeuralNetwork(Module):
         else:
             raise NotImplemented("Network must be Sequential or Object.")
 
+    def _get_output_shape(self):
+        return self.network(torch.rand([2, *self.input_size])).data.numpy().shape
+
 
     #########################################################################
     # Utility functions
@@ -93,12 +104,17 @@ class NeuralNetwork(Module):
         return self.name
 
 
+
 class Generator(NeuralNetwork):
     def __init__(self, network, input_size, device, ngpu):
         super().__init__(network, input_size=input_size, name="Generator", device=device, ngpu=ngpu)
 
 
 class Adversariat(NeuralNetwork):
+    """ Implements adversariat architecture.
+
+    Might either be a discriminator (output [0, 1]) or critic (output [-Inf, Inf]).
+    """
     def __init__(self, network, input_size, adv_type, device, ngpu):
         valid_types = ["Discriminator", "Critic"]
         if adv_type == "Discriminator":

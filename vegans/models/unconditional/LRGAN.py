@@ -1,12 +1,32 @@
+"""
+LRGAN
+-----
+Implements the latent regressor GAN well described in the BicycleGAN paper[1].
+
+It introduces an encoder network which maps the generator output back to the latent
+input space. This should help to prevent mode collapse and improve image variety.
+
+Losses:
+    - Generator: Binary cross-entropy + L1-latent-loss (Mean Absolute Error)
+    - Discriminator: Binary cross-entropy
+    - Encoder: L1-latent-loss (Mean Absolute Error)
+Default optimizer:
+    - torch.optim.Adam
+
+References
+----------
+.. [1] https://arxiv.org/pdf/1711.11586.pdf
+"""
+
 import torch
 
 from torch.nn import BCELoss, L1Loss
 from torch.nn import MSELoss as L2Loss
 
 from vegans.utils.networks import Generator, Adversariat, Encoder
-from vegans.models.unconditional.GenerativeModel import GenerativeModel
+from vegans.models.unconditional.AbstractGenerativeModel import AbstractGenerativeModel
 
-class LRGAN(GenerativeModel):
+class LRGAN(AbstractGenerativeModel):
     #########################################################################
     # Actions before training
     #########################################################################
@@ -22,7 +42,7 @@ class LRGAN(GenerativeModel):
             lambda_L1=10,
             fixed_noise_size=32,
             device=None,
-            folder="./GAN1v1",
+            folder="./AbstractGAN1v1",
             ngpu=0):
 
         if device is None:
@@ -34,12 +54,18 @@ class LRGAN(GenerativeModel):
             "Generator": self.generator, "Adversariat": self.adversariat, "Encoder": self.encoder
         }
 
-        GenerativeModel.__init__(
+        AbstractGenerativeModel.__init__(
             self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
         self.lambda_L1 = lambda_L1
         self.hyperparameters["lambda_L1"] = lambda_L1
+        assert (self.generator.output_size == self.x_dim), (
+            "Generator output shape must be equal to x_dim. {} vs. {}.".format(self.generator.output_size, self.x_dim)
+        )
+        assert (self.encoder.output_size == self.z_dim), (
+            "Encoder output shape must be equal to z_dim. {} vs. {}.".format(self.encoder.output_size, self.z_dim)
+        )
 
     def _default_optimizer(self):
         return torch.optim.Adam

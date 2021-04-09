@@ -1,27 +1,20 @@
-import os
-import sys
-import json
-import time
 import torch
 
 import numpy as np
 import matplotlib.pyplot as plt
 import vegans.utils.utils as utils
 
-from datetime import datetime
-from torch.utils.data import DataLoader
 from torchvision.utils import make_grid
 from vegans.utils.utils import get_input_dim
-from torch.utils.tensorboard import SummaryWriter
-from vegans.models.unconditional.GenerativeModel import GenerativeModel
+from vegans.models.unconditional.AbstractGenerativeModel import AbstractGenerativeModel
 
 
-class ConditionalGenerativeModel(GenerativeModel):
+class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
     #########################################################################
     # Actions before training
     #########################################################################
     def __init__(self, x_dim, z_dim, y_dim, optim, optim_kwargs, fixed_noise_size, device, folder, ngpu):
-        """ The ConditionalGenerativeModel is the most basic building block of VeGAN for conditional models. All conditional GAN
+        """ The AbstractConditionalGenerativeModel is the most basic building block of VeGAN for conditional models. All conditional GAN
         implementation should at least inherit from this class.
 
         Parameters
@@ -54,7 +47,7 @@ class ConditionalGenerativeModel(GenerativeModel):
         """
         adv_in_dim = get_input_dim(dim1=x_dim, dim2=y_dim)
         gen_in_dim = get_input_dim(dim1=z_dim, dim2=y_dim)
-        GenerativeModel.__init__(
+        AbstractGenerativeModel.__init__(
             self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
@@ -183,7 +176,7 @@ class ConditionalGenerativeModel(GenerativeModel):
     #########################################################################
     def _log_images(self, images, step, writer):
         assert len(self.adversariat.input_size) > 1, (
-            "Called _log_images in GenerativeModel for adversariat.input_size = {}.".format(self.adversariat.input_size)
+            "Called _log_images in AbstractGenerativeModel for adversariat.input_size = {}.".format(self.adversariat.input_size)
         )
         if writer is not None:
             grid = make_grid(images)
@@ -235,6 +228,9 @@ class ConditionalGenerativeModel(GenerativeModel):
     #########################################################################
     # Utility functions
     #########################################################################
+    def concatenate(self, tensor1, tensor2):
+        return utils.concatenate(tensor1=tensor1, tensor2=tensor2)
+
     def generate(self, y, z=None):
         """ Generate output with generator.
 
@@ -267,14 +263,12 @@ class ConditionalGenerativeModel(GenerativeModel):
         np.array
             Array with one output per x indicating the realness of an input.
         """
-        inpt = utils.concatenate(x, y).float().to(self.device)
+        inpt = self.concatenate(x, y).float().to(self.device)
         return self.adversariat(inpt)
 
     def __call__(self, y, z=None):
-        if len(y.shape) == 1:
-            y = self._one_hot_encoder.transform(y)
         if z is None:
             z = self.sample(n=len(y))
 
-        inpt = utils.concatenate(z, y).float()
-        return self.generator(inpt)
+        inpt = self.concatenate(z, y).float()
+        return self.generate(z=inpt)

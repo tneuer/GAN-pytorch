@@ -1,9 +1,28 @@
+"""
+ConditionalPix2Pix
+------------------
+Implements the Pix2Pix GAN[1].
+
+Uses the binary cross-entropy norm for evaluating the realness of real and fake images.
+Also enforces a L1 pixel wise penalty on the generated images.
+
+Losses:
+    - Generator: Binary cross-entropy + L1 (Mean Absolute Error)
+    - Discriminator: Binary cross-entropy
+Default optimizer:
+    - torch.optim.Adam
+
+References
+----------
+.. [1] https://arxiv.org/abs/1611.07004
+"""
+
 import torch
 
 from torch.nn import BCELoss, L1Loss
-from vegans.models.conditional.ConditionalGAN1v1 import ConditionalGAN1v1
+from vegans.models.conditional.AbstractConditionalGAN1v1 import AbstractConditionalGAN1v1
 
-class ConditionalPix2Pix(ConditionalGAN1v1):
+class ConditionalPix2Pix(AbstractConditionalGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################

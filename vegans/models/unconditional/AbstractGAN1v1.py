@@ -4,10 +4,10 @@ import torch
 import numpy as np
 
 from vegans.utils.networks import Generator, Adversariat
-from vegans.models.unconditional.GenerativeModel import GenerativeModel
+from vegans.models.unconditional.AbstractGenerativeModel import AbstractGenerativeModel
 
 
-class GAN1v1(GenerativeModel):
+class AbstractGAN1v1(AbstractGenerativeModel):
     """ Special half abstract class for GAN with structure of one generator and
     one discriminator / critic. Examples are the original `VanillaGAN`, `WassersteinGAN`
     and `WassersteinGANGP`.
@@ -27,7 +27,7 @@ class GAN1v1(GenerativeModel):
             optim_kwargs=None,
             fixed_noise_size=32,
             device=None,
-            folder="./GAN1v1",
+            folder="./AbstractGAN1v1",
             ngpu=0):
 
         if device is None:
@@ -36,12 +36,13 @@ class GAN1v1(GenerativeModel):
         self.adversariat = Adversariat(adversariat, input_size=x_dim, adv_type=adv_type, device=device, ngpu=ngpu)
         self.neural_nets = {"Generator": self.generator, "Adversariat": self.adversariat}
 
-        GenerativeModel.__init__(
+        AbstractGenerativeModel.__init__(
             self, x_dim=x_dim, z_dim=z_dim, optim=optim, optim_kwargs=optim_kwargs,
             fixed_noise_size=fixed_noise_size, device=device, folder=folder, ngpu=ngpu
         )
-        assert hasattr(self, "generator"), "Model must have attribute 'generator'."
-        assert hasattr(self, "adversariat"), "Model must have attribute 'adversariat'."
+        assert (self.generator.output_size == self.x_dim), (
+            "Generator output shape must be equal to x_dim. {} vs. {}.".format(self.generator.output_size, self.x_dim)
+        )
 
 
     #########################################################################

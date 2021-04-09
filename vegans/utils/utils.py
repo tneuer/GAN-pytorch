@@ -50,6 +50,25 @@ def wasserstein_loss(input, target):
 
 
 def concatenate(tensor1, tensor2):
+    """ Concatenates two 2D or 4D tensors.
+
+    Parameters
+    ----------
+    tensor1 : torch.Tensor
+        2D or 4D tensor.
+    tensor2 : torch.Tensor
+        2D or 4D tensor.
+
+    Returns
+    -------
+    torch.Tensor
+        Cncatenation of tensor1 and tensor2.
+
+    Raises
+    ------
+    NotImplementedError
+        If tensors do not have 2 or 4 dimensions.
+    """
     assert tensor1.shape[0] == tensor2.shape[0], (
         "Tensors to concatenate must have same dim 0. Tensor1: {}. Tensor2: {}.".format(tensor1.shape[0], tensor2.shape[0])
     )
@@ -71,21 +90,42 @@ def concatenate(tensor1, tensor2):
     return torch.cat((tensor1, tensor2), axis=1)
 
 def get_input_dim(dim1, dim2):
+    """ Get the number of input dimension from two inputs.
 
+    Tensors often need to be concatenated in different ways. This library
+    supports the concatenation of a 2D tensor with a 4D Tensor. For both
+    tensors the first dimension will be number of samples which is not
+    considered in this function. Therefore pass a 1D or 3D Tensor indicating
+    the vector or image dimensions (nr_channles, height, width). Calculates the
+    output dim when concatenating two images, an image with a vector or a vector
+    with an image.
+
+    Parameters
+    ----------
+    dim1 : int, iterable
+        Dimension of input 1.
+    dim2 : int, iterable
+        Dimension of input 2.
+
+    Returns
+    -------
+    list
+        Output dimension after concatenation.
+    """
     dim1 = [dim1] if isinstance(dim1, int) else dim1
     dim2 = [dim2] if isinstance(dim1, int) else dim2
     if len(dim1)==1 and len(dim2)==1:
-        gen_in_dim = dim1[0] + dim2[0]
+        out_dim = [dim1[0] + dim2[0]]
     elif len(dim1)==3 and len(dim2)==1:
-        gen_in_dim = [dim1[0]+dim2[0], *dim1[1:]]
+        out_dim = [dim1[0]+dim2[0], *dim1[1:]]
     elif len(dim1)==1 and len(dim2)==3:
-        gen_in_dim = [dim2[0]+dim1[0], *dim2[1:]]
+        out_dim = [dim2[0]+dim1[0], *dim2[1:]]
     else:
         assert (dim1[1] == dim2[1]) and (dim1[2] == dim2[2]), (
             "If both dim1 and dim2 are arrays, must have same shape. dim1: {}. dim2: {}.".format(dim1, dim2)
         )
-        gen_in_dim = [dim1[0]+dim2[0], *dim1[1:]]
-    return gen_in_dim
+        out_dim = [dim1[0]+dim2[0], *dim1[1:]]
+    return out_dim
 
 def plot_losses(losses, show=True, share=False):
     """
@@ -122,6 +162,24 @@ def plot_losses(losses, show=True, share=False):
 
 
 def plot_images(images, labels=None, show=True, n=None):
+    """ Plot a number of input images with optional label
+
+    Parameters
+    ----------
+    images : np.array
+        Must be of shape [nr_samples, height, width].
+    labels : np.array, optional
+        Array of labels used in the title.
+    show : bool, optional
+        If True, `plt.show` is called to visualise the images directly.
+    n : None, optional
+        Number of images to be drawn, maximum is 36.
+
+    Returns
+    -------
+    TYPE
+        Description
+    """
     if n is None:
         n = images.shape[0]
     if n > 36:

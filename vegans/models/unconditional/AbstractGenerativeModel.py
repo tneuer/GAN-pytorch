@@ -16,13 +16,13 @@ from vegans.utils.utils import plot_losses
 from torch.utils.tensorboard import SummaryWriter
 
 
-class GenerativeModel(ABC):
+class AbstractGenerativeModel(ABC):
     #########################################################################
     # Actions before training
     #########################################################################
     def __init__(self, x_dim, z_dim, optim, optim_kwargs, fixed_noise_size, device, folder, ngpu):
-        """ The GenerativeModel is the most basic building block of VeGAN. All GAN implementation should
-        at least inherit from this class. If a conditional version is implemented look at `ConditionalGenerativeModel`.
+        """ The AbstractGenerativeModel is the most basic building block of VeGAN. All GAN implementation should
+        at least inherit from this class. If a conditional version is implemented look at `AbstractConditionalGenerativeModel`.
 
         Parameters
         ----------
@@ -139,7 +139,7 @@ class GenerativeModel(ABC):
         assert len(self.x_dim) == 1 or len(self.x_dim) == 3, (
             "x_dim must either have length 1 (for vector input) or 3 (for image input). Given: {}.".format(x_dim)
         )
-        assert isinstance(self.neural_nets, dict), "'neural_nets' attribute of GenerativeModel must be dictionary."
+        assert isinstance(self.neural_nets, dict), "'neural_nets' attribute of AbstractGenerativeModel must be dictionary."
         self._check_dict_keys(self.optimizers, where="_define_optimizer_kwargs")
 
     @abstractmethod
@@ -295,7 +295,7 @@ class GenerativeModel(ABC):
             Flag to indicate whether subdirectory folder/tensorboard should be created to log losses and images.
         """
         if not self._init_run:
-            raise ValueError("Run initializer of the GenerativeModel class is your subclass!")
+            raise ValueError("Run initializer of the AbstractGenerativeModel class is your subclass!")
         train_dataloader, test_dataloader, writer_train, writer_test, save_periods = self._set_up_training(
             X_train, y_train=None, X_test=X_test, y_test=None, epochs=epochs, batch_size=batch_size, steps=steps,
             print_every=print_every, save_model_every=save_model_every, save_images_every=save_images_every,
@@ -404,7 +404,7 @@ class GenerativeModel(ABC):
 
     def _log_images(self, images, step, writer):
         assert len(self.adversariat.input_size) > 1, (
-            "Called _log_images in GenerativeModel for adversariat.input_size = {}.".format(self.adversariat.input_size)
+            "Called _log_images in AbstractGenerativeModel for adversariat.input_size = {}.".format(self.adversariat.input_size)
         )
         if writer is not None:
             grid = make_grid(images)
@@ -554,7 +554,7 @@ class GenerativeModel(ABC):
 
         Returns
         -------
-        GenerativeModel
+        AbstractGenerativeModel
             Trained model
         """
         return torch.load(path)

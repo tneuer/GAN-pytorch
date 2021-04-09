@@ -58,7 +58,7 @@ Also look at the [jupyter notebooks](https://github.com/tneuer/GAN-pytorch/tree/
 
 ### Slightly More Details:
 
-All of the GAN objects inherit from a `GenerativeModel` base class. When building any such GAN, you must give in argument a generator and discriminator networks (some `torch.nn.Module`), as well as a the dimensions of the latent space `z_dim` and input dimension of the images `x_dim`. In addition, you can specify some parameters supported by all GAN implementations:
+All of the GAN objects inherit from a `AbstractGenerativeModel` base class. When building any such GAN, you must give in argument a generator and discriminator networks (some `torch.nn.Module`), as well as a the dimensions of the latent space `z_dim` and input dimension of the images `x_dim`. In addition, you can specify some parameters supported by all GAN implementations:
 * `optim`: The optimizer to use for all networks during training. If `None` a default optimizer (probably either `torch.optim.Adam` or `torch.optim.RMSprop`) is chosen by the specific model. A `dict` type with appropriate keys can be passed to specify different optimizers for different networks.
 * `optim_kwargs`:  The optimizer default arguments. A `dict` type with appropriate keys can be passed to specify different optimizer keyword arguments for different networks.
 * `fixed_noise_size`: The number of samples to save (from fixed noise vectors). These are saved within Tensorboard (if `enable_tensorboard=True` during fitting) and in the `Model/images` subfolder.
@@ -79,7 +79,7 @@ The fit function takes the following optional arguments:
 
 
 
-If you are researching new GAN training algorithms, you may find it useful to inherit from the `GenerativeModel` or  `ConditionalGenerativeModel` base class.
+If you are researching new GAN training algorithms, you may find it useful to inherit from the `AbstractGenerativeModel` or  `AbstractConditionalGenerativeModel` base class.
 
 ### Learn more:
 
@@ -101,14 +101,13 @@ Some of the code has been inspired by some existing GAN implementations:
 - GAN Implementations
   - BEGAN
   - EBGAN
-  - LR-GAN
   - VAEGAN
   - BicycleGAN
   - VAEGAN
+  - LR-GAN
   - CycleGAN
   - InfoGAN
   - Least Squares GAN
-  - ~~Pix2Pix~~
   - WassersteinGAN SpectralNorm
   - DiscoGAN
   - Adversarial Autoencoder
@@ -119,28 +118,24 @@ Some of the code has been inspired by some existing GAN implementations:
 - Other
 
   - Feature loss
-
-  - Rename GAN1v1 -> AbstractGAN1v1
-
-  - Rename ConditionalGAN1v1 -> AbstractConditionalGAN1v1
-
-  - Rename GenerativeModel -> AbstractGenerativeModel
-  
-  - Rename ConditionalGenerativeModel -> AbstractConditionalGenerativeModel
-  
-  - Improve Doc for networks
-  
+- return numpy array instead o tensor for generate. 
+  - Automatically use evaluation mode
+- enable Wasserstein loss for all architectures (when it makes sense)
   - Do not save Discriminator
-    
-  - Include sources in jupyter
-    
+- Include sources in jupyter
   - Include images in jupyter
-    
-  - Make all examples work nicely
-    
+- Make all examples work nicely
   - Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/
-    
-    
+- Done
+  - ~~Pix2Pix~~
+  - ~~Check output dim (generator, encoder)~~
+  - ~~Improve Doc for networks~~
+  - ~~Rename AbstractGAN1v1 -> AbstractAbstractGAN1v1~~
+  - ~~Rename AbstractConditionalGAN1v1 -> AbstractAbstractConditionalGAN1v1~~
+  - ~~Rename AbstractGenerativeModel -> AbstractAbstractGenerativeModel~~
+  - ~~Rename AbstractConditionalGenerativeModel -> AbstractAbstractConditionalGenerativeModel~~
+
+
 
 
 

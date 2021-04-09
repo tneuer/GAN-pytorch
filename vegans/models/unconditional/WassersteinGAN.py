@@ -1,12 +1,34 @@
+"""
+WassersteinGAN
+--------------
+Implements the Wasserstein GAN[1].
+
+Uses the Wasserstein loss to determine the realness of real and fake images.
+The Wasserstein loss has several theoretical advantages over the Jensen-Shanon divergence
+minimised by the original GAN. In this architecture the critic (discriminator) is often
+trained multiple times for every generator step.
+Lipschitz continuity is "enforced" by weight clipping.
+
+Losses:
+    - Generator: Wasserstein
+    - Critic: Wasserstein
+Default optimizer:
+    - torch.optim.RMSprop
+
+References
+----------
+.. [1] https://export.arxiv.org/pdf/1701.07875
+"""
+
 import torch
 
 import numpy as np
 
-from vegans.models.unconditional.GAN1v1 import GAN1v1
+from vegans.models.unconditional.AbstractGAN1v1 import AbstractGAN1v1
 from vegans.utils.utils import wasserstein_loss
 
 
-class WassersteinGAN(GAN1v1):
+class WassersteinGAN(AbstractGAN1v1):
     #########################################################################
     # Actions before training
     #########################################################################
