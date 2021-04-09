@@ -140,8 +140,6 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
                         self._backward(who=name)
                         self._step(who=name)
 
-                print(self.generator.training)
-                print(self.adversariat.training)
                 if print_every is not None and step % print_every == 0:
                     self._losses = {}
                     self.calculate_losses(X_batch=X, Z_batch=Z, y_batch=y)
@@ -275,6 +273,8 @@ class AbstractConditionalGenerativeModel(AbstractGenerativeModel):
         if z is None:
             z = self.sample(n=len(y))
 
+        if not isinstance(y, torch.Tensor):
+            y = torch.from_numpy(y).to(self.device)
         inpt = self.concatenate(z, y).float()
         sample = self.generator(inpt)
         if self._is_training:

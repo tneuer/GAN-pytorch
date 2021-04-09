@@ -124,14 +124,14 @@ Some of the code has been inspired by some existing GAN implementations:
   - Feature loss
   - enable Wasserstein loss for all architectures (when it makes sense)
   - Do not save Discriminator
-  - Include sources in jupyter
-  - Include images in jupyter
   - Make all examples work nicely
   - Implement Pix2Pix architecture: https://blog.eduonix.com/artificial-intelligence/pix2pix-gan/
 
 
 
 - Done
+  - ~~Include sources in jupyter~~
+  - ~~Include images in jupyter~~
   - ~~Pix2Pix~~
   - ~~Check output dim (generator, encoder)~~
   - ~~Improve Doc for networks~~
